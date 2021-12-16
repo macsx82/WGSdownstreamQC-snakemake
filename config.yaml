@@ -1,0 +1,23 @@
+#Config file template for WGS downstream QC pipeline
+
+paths:
+  input: "input_file_folder" #path for the input files to be QC-ed. It can contain a single file with all chromosomes or a file for each chromosome
+  base_out: "base_output_folder" #base folder for the output
+  log_dir: "" #base path for log folder
+  benchmark: "" #base path for benchmark folder
+  tmp: "" #base path for tmp folder
+
+##### Rules specific options #####
+rules:
+  singletons:
+    out_dir: "01.singletons"
+  coverage:
+  SampleHetRate:
+  SampleMissingRate:
+
+
+### - PATH TOOL - ###
+SAMBAMBA_TOOL: "sambamba"
+BCFTOOLS: "bcftools"
+VCFTOOLS: "vcftools"
+BEDTOOLS: "bedtools"
