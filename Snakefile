@@ -9,6 +9,7 @@ import pandas as pd
 import pathlib
 import io
 import os
+import os.path
 import re
 from snakemake.exceptions import print_exception, WorkflowError
 from snakemake.utils import validate, min_version
