@@ -1,7 +1,24 @@
 #Config file template for WGS downstream QC pipeline
+project_name: "project name" #name of the project to be used also as suffix for file naming
+
+#################################################################################
+#paths and subfolders containing data we need for the pipeline to run
+references:
+  basepath: "/storage/burlo/cocca/resources"
+  provider: "hgRef"
+  release: "GRCh38.p13"
+
+genome_fasta: "GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna"
+#################################################################################
+
+#We suppose we need to concat or split different chromosomes, so we need to define alist of chromosomes to concat.
+#by default, chrY is omitted, since it is only available for MALES samples
+#also by default, we consider chrX PAR and NON PAR regions together
+chrs: ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10","chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19","chr20","chr21","chr22","chrX"]
+
 
 paths:
-  input: "input_file_folder" #path for the input files to be QC-ed. It can contain a single file with all chromosomes or a file for each chromosome
+  input_vcf: "input_file_folder" #path for the input files to be QC-ed. It should contain a single file with all samples and chromosomes
   base_out: "base_output_folder" #base folder for the output
   log_dir: "" #base path for log folder
   benchmark: "" #base path for benchmark folder
@@ -9,8 +26,16 @@ paths:
 
 ##### Rules specific options #####
 rules:
+  reapplyVQSRsnps:
+    VQSLOD_thr: "VQSLOD new threshold" #define the new threshold vor vqslod filtering
+    out_dir: "01.VQSR_reapply"
+  reapplyVQSRindels:
+    VQSLOD_thr: "VQSLOD new threshold" #define the new threshold vor vqslod filtering
+    out_dir: "01.VQSR_reapply"
+  mergeReapplyVQSR:
+    out_dir: "01.VQSR_reapply"
   singletons:
-    out_dir: "01.singletons"
+    out_dir: "02.singletons"
   coverage:
   SampleHetRate:
   SampleMissingRate:

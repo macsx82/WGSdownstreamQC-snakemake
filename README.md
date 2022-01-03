@@ -15,6 +15,7 @@ Variant related:
 * HWE
 * Heterozygosity rate
 * Call rate
+* AF comparison with outbred populations
 
 Samples and variants comparison with SNP array data (available only for samples of the FVG cohort):
 

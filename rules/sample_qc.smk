@@ -89,12 +89,14 @@ rule SampleHetRate:
 rule SampleGetHetRateOut:
 	output:
 	input:
+		rules.SampleHetRate.output[0]
 	params:
 	log:
 	threads:
 	resources:
 	benchmark:
-	shell:
+	run:
+		get_het_sample_outliers(input[0], output[0])
 
 
 #Missing rate rule: plink or vcftools or bcftools command

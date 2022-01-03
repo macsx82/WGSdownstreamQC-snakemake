@@ -20,8 +20,9 @@ include_prefix="rules"
 
 #define some global variables from the config file
 BASE_OUT=config["paths"]["base_out"]
-
-
+MAIN_VCF_INPUT=config["paths"]["input_vcf"]
+chroms=config["chrs"]
+PROJECT_NAME=config["project_name"]
 ##### functions #####
 include:
     "scripts/functions.py"
@@ -33,13 +34,16 @@ localrules: all
 rule all:
 	input:
 		#define target input
-        expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"])
+        # expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"])
+        os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz")
 
 #### Modules ####
 include:
-    include_prefix + "/sample_qc.smk"
-include:
-    include_prefix + "/variant_qc.smk"
-include:
-    include_prefix + "/nrdr.smk"
+    include_prefix + "/preproc.smk"
+# include:
+#     include_prefix + "/sample_qc.smk"
+# include:
+#     include_prefix + "/variant_qc.smk"
+# include:
+#     include_prefix + "/nrdr.smk"
 
