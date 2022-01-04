@@ -37,13 +37,16 @@ rule all:
     #define target input
     # expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"])
         os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz"),
-        expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"])
+        # expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"]),
+        os.path.join(config.get("patha").get("base_out"),config.get("rules").get("stats").get("out_dir"),"all.{vcf_name}.stats")
 
 #### Modules ####
 include:
     include_prefix + "/preproc.smk"
+# include:
+#     include_prefix + "/sample_qc.smk"
 include:
-    include_prefix + "/sample_qc.smk"
+    include_prefix + "/vcf_stats.smk"
 # include:
 #     include_prefix + "/variant_qc.smk"
 # include:

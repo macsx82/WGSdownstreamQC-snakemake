@@ -35,10 +35,15 @@ rules:
   mergeReapplyVQSR:
     out_dir: "01.VQSR_reapply"
   singletons:
-    out_dir: "02.singletons"
+    out_dir: "02.samples/singletons"
   coverage:
+    out_dir: "02.samples/coverage"
   SampleHetRate:
+    out_dir: "02.samples/HetRate"
   SampleMissingRate:
+    out_dir: "02.samples/MissingRate"
+  stats:
+    out_dir: "05.stats"
 
 
 ### - PATH TOOL - ###
