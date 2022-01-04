@@ -112,7 +112,7 @@ rule sampleDP:
 #Missing rate rule
 rule SampleMissingRate:
 	output:
-		expand(os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{{vcf_name}}_missing.{ext}"), ext=["imiss", "log"])
+		expand(os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{{vcf_name}}_missing.{ext}"), ext=["imiss", "log"])
 	input:
 		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
