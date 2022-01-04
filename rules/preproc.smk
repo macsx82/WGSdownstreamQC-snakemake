@@ -52,8 +52,10 @@ rule reapplyVQSRindels:
 #Rule to concat again the refiltered data
 rule mergeReapplyVQSR:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz"),
-		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz.tbi")
+		# os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz"),
+		# os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz.tbi")
+		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}.vcf.gz"),
+		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}.vcf.gz.tbi")
 	input:
 		vcf_snps=rules.reapplyVQSRsnps.output,
 		vcf_indels=rules.reapplyVQSRindels.output
@@ -62,10 +64,10 @@ rule mergeReapplyVQSR:
 		tmp=config.get("paths").get("tmp"),
 		ref_genome=resolve_single_filepath(*references_abs_path(), config.get("genome_fasta"))
 	log:
-		config["paths"]["log_dir"] + "/mergeReapplyVQSR.log",
-		config["paths"]["log_dir"] + "/mergeReapplyVQSR.e"
+		config["paths"]["log_dir"] + "/{vcf_name}-mergeReapplyVQSR.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-mergeReapplyVQSR.e"
 	benchmark:
-		config["paths"]["benchmark"] + "/mergeReapplyVQSR.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_mergeReapplyVQSR.tsv"
 	envmodules:
 		"bcftools/1.14"
 	resources:

@@ -26,68 +26,37 @@ rule singletons:
 		"vcftools/0.1.16"
 	shell:
 		"""
-		{params.vcftools} --gzvcf {input} --singletons --out {params.out_prefix}
+		{params.vcftools} --gzvcf {input.vcf} --singletons --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
 
-#we may need data from varcall pipeline
-#or we can use Read Depth by Sample
-# rule sampleDP:
-# 	output:
-# 	input:
-# 	params:
-# 		bcftools=config['BCFTOOLS'],
-# 		vcftools=config['VCFTOOLS'],
-# 		tmp=os.path.join(BASE_OUT,config.get("paths").get("tmp")),
-# 		out_prefix=
-# 	log:
-# 		config["paths"]["log_dir"] + "/{vcf_name}-sampleDP.log",
-# 		config["paths"]["log_dir"] + "/{vcf_name}-sampleDP.e"
-# 	threads: 1
-# 	resources:
-# 		mem_mb=5000
-# 	benchmark:
-# 		config["paths"]["benchmark"] + "/{vcf_name}_sampleDP.tsv"
-# 	envmodules:
-# 		"vcftools/0.1.16"
-# 	shell:
-# 		"""
-# 		{params.vcftools} --gzvcf {input} --depth --out {params.out_prefix}
-# 		"""
+#het rate rule: first get the data with vcftools
+rule SampleHetRate:
+	output:
+		expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{{vcf_name}}_het.{ext}"), ext=["het", "log"])
+	input:
+		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
+		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+	params:
+		bcftools=config['BCFTOOLS'],
+		vcftools=config['VCFTOOLS'],
+		tmp=os.path.join(BASE_OUT,config.get("paths").get("tmp")),
+		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_het")
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-hetRate.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-hetRate.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_hetRate.tsv"
+	envmodules:
+		"vcftools/0.1.16"
+	shell:
+		"""
+		{params.vcftools} --gzvcf {input.vcf} --het --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
+		"""
 
-# rule coverage:
-# 	output:
-# 	input:
-# 	params:
-# 	log:
-# 	threads:
-# 	resources:
-# 	benchmark:
-# 	shell:
-
-# #het rate ruel: vcftool or custom script
-# rule SampleHetRate:
-# 	output:
-# 	input:
-# 	params:
-# 		bcftools=config['BCFTOOLS'],
-# 		vcftools=config['VCFTOOLS'],
-# 		tmp=os.path.join(BASE_OUT,config.get("paths").get("tmp")),
-# 		out_prefix=
-# 	log:
-# 		config["paths"]["log_dir"] + "/{vcf_name}-hetRate.log",
-# 		config["paths"]["log_dir"] + "/{vcf_name}-hetRate.e"
-# 	threads: 1
-# 	resources:
-# 		mem_mb=5000
-# 	benchmark:
-# 		config["paths"]["benchmark"] + "/{vcf_name}_hetRate.tsv"
-# 	envmodules:
-# 		"vcftools/0.1.16"
-# 	shell:
-# 		"""
-# 		{params.vcftools} --gzvcf {input} --het --out {params.out_prefix}
-# 		"""
-
+#het rate rule: get vcftools result and extract the het rate for plotting
 # rule SampleGetHetRateOut:
 # 	output:
 # 	input:
@@ -101,8 +70,35 @@ rule singletons:
 # 		get_het_sample_outliers(input[0], output[0])
 
 
-# #Missing rate rule: plink or vcftools or bcftools command
-# rule SampleMissingRate:
+#we may need data from varcall pipeline
+#or we can use Read Depth by Sample
+rule sampleDP:
+	output:
+		expand(os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{{vcf_name}}_dp.{ext}"), ext=["idepth", "log"])
+	input:
+		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
+		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+	params:
+		bcftools=config['BCFTOOLS'],
+		vcftools=config['VCFTOOLS'],
+		tmp=os.path.join(BASE_OUT,config.get("paths").get("tmp")),
+		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{vcf_name}_dp")
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-sampleDP.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-sampleDP.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_sampleDP.tsv"
+	envmodules:
+		"vcftools/0.1.16"
+	shell:
+		"""
+		{params.vcftools} --gzvcf {input.vcf} --depth --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
+		"""
+
+# rule coverage:
 # 	output:
 # 	input:
 # 	params:
@@ -112,6 +108,33 @@ rule singletons:
 # 	benchmark:
 # 	shell:
 
+
+#Missing rate rule
+rule SampleMissingRate:
+	output:
+		expand(os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{{vcf_name}}_missing.{ext}"), ext=["imiss", "log"])
+	input:
+		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
+		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+	params:
+		bcftools=config['BCFTOOLS'],
+		vcftools=config['VCFTOOLS'],
+		tmp=os.path.join(BASE_OUT,config.get("paths").get("tmp")),
+		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{vcf_name}_missing")
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-sampleMissing.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-sampleMissing.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_sampleMissing.tsv"
+	envmodules:
+		"vcftools/0.1.16"
+	shell:
+		"""
+		{params.vcftools} --gzvcf {input.vcf} --missing-indv --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
+		"""
 
 # rule PCA:
 # 	output:
