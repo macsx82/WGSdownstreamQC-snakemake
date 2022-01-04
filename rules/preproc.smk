@@ -58,7 +58,7 @@ rule mergeReapplyVQSR:
 		vcf_indels=rules.reapplyVQSRindels.output
 	params:
 		bcftools=config.get("BCFTOOLS"),
-		tmp=os.path.join(config.get("files_path").get("base_joint_call_path"),config.get("files_path").get("tmp")),
+		tmp=config.get("paths").get("tmp"),
 		ref_genome=resolve_single_filepath(*references_abs_path(), config.get("genome_fasta"))
 	log:
 		config["paths"]["log_dir"] + "/mergeReapplyVQSR.log",
