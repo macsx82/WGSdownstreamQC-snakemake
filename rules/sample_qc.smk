@@ -42,13 +42,13 @@ rule SampleHetRate:
 		tmp=os.path.join(BASE_OUT,config.get("paths").get("tmp")),
 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_het")
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-hetRate.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-hetRate.e"
+		config["paths"]["log_dir"] + "/{vcf_name}-het.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-het.e"
 	threads: 1
 	resources:
 		mem_mb=5000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_hetRate.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_het.tsv"
 	envmodules:
 		"vcftools/0.1.16"
 	shell:
@@ -57,17 +57,23 @@ rule SampleHetRate:
 		"""
 
 #het rate rule: get vcftools result and extract the het rate for plotting
-# rule SampleGetHetRateOut:
-# 	output:
-# 	input:
-# 		rules.SampleHetRate.output[0]
-# 	params:
-# 	log:
-# 	threads:
-# 	resources:
-# 	benchmark:
-# 	run:
-# 		get_het_sample_outliers(input[0], output[0])
+rule SampleGetHetRateOut:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate.txt")
+	input:
+		rules.SampleHetRate.output[0]
+	params:
+		vcftools=config['VCFTOOLS']
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-hetRate.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-hetRate.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_hetRate.tsv"
+	run:
+		get_het_sample_outliers(input[0], output[0])
 
 
 #we may need data from varcall pipeline
