@@ -21,6 +21,7 @@ include_prefix="rules"
 
 #define some global variables from the config file
 BASE_OUT=config["paths"]["base_out"]
+print(BASE_OUT)
 MAIN_VCF_INPUT=config["paths"]["input_vcf"]
 chroms=config["chrs"]
 PROJECT_NAME=config["project_name"]
