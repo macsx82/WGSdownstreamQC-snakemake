@@ -21,7 +21,6 @@ include_prefix="rules"
 
 #define some global variables from the config file
 BASE_OUT=config["paths"]["base_out"]
-
 MAIN_VCF_INPUT=config["paths"]["input_vcf"]
 chroms=config["chrs"]
 PROJECT_NAME=config["project_name"]
@@ -37,8 +36,7 @@ rule all:
     input:
     #define target input
     # expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"])
-    # os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz")
-    config["paths"]["base_out"] + "/"+ config.get("rules").get("mergeReapplyVQSR").get("out_dir") +"/"+ PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz"
+        os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz")
 
 #### Modules ####
 include:
