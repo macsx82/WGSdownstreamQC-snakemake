@@ -34,11 +34,12 @@ localrules: all
 ##### Target rules #####
 rule all:
     input:
-    #define target input
-    # expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"])
+        #define target input
+        # expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"])
         os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz"),
         # expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"]),
-        expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"all.{vcf_name}.stats"), vcf_name=PROJECT_NAME + "_MERGED_VQSLODrefilter")
+        expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"all.{vcf_name}.stats"), vcf_name=PROJECT_NAME + "_MERGED_VQSLODrefilter"),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"],vcf_name=PROJECT_NAME + "_MERGED_VQSLODrefilter"),
 
 #### Modules ####
 include:
