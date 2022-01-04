@@ -8,10 +8,10 @@ rule vcf_stats_initial:
 	params:
 		bcftools=config['BCFTOOLS']
 	log:
-		config["files_path"]["log_dir"] + "/vcf_stats_initial.log",
-		config["files_path"]["log_dir"] + "/vcf_stats_initial.e"
+		config["paths"]["log_dir"] + "/vcf_stats_initial.log",
+		config["paths"]["log_dir"] + "/vcf_stats_initial.e"
 	benchmark:
-		config["files_path"]["benchmark"] + "/vcf_stats_initial.tsv"
+		config["paths"]["benchmark"] + "/vcf_stats_initial.tsv"
 	resources:
 		mem_mb=5000
 	envmodules:
