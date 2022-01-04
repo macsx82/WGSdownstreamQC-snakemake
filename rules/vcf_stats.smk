@@ -1,7 +1,7 @@
 #generate stats for vcf files after phasing
 rule vcf_stats_initial:
 	output:
-		os.path.join(config.get("patha").get("base_out"),config.get("rules").get("stats").get("out_dir"),"all.{vcf_name}.stats")
+		os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"all.{vcf_name}.stats")
 	input:
 		rules.mergeReapplyVQSR.output[0],
 		rules.mergeReapplyVQSR.output[1]
