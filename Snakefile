@@ -41,8 +41,8 @@ rule all:
 #### Modules ####
 include:
     include_prefix + "/preproc.smk"
-# include:
-#     include_prefix + "/sample_qc.smk"
+include:
+    include_prefix + "/sample_qc.smk"
 # include:
 #     include_prefix + "/variant_qc.smk"
 # include:
