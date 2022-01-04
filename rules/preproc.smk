@@ -7,7 +7,7 @@ rule reapplyVQSRsnps:
 	input:
 		MAIN_VCF_INPUT
 	params:
-		vqslod_thr=config.get("rules").get("reapplyVQSRsnps").get("VQSLOD_thr")
+		vqslod_thr=config.get("rules").get("reapplyVQSRsnps").get("VQSLOD_thr"),
 		bcftools_bin=config.get("BCFTOOLS")
 	log:
 		config["paths"]["log_dir"] + "/reapplyVQSRsnps.log",
