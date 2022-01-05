@@ -3,7 +3,10 @@
 rule cleanMissingHwe:
 	output:
 		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz"),
-		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz.tbi")
+		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz.tbi"),
+		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.removed.sites"),
+		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.log")
+
 	input:
 		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
@@ -12,6 +15,7 @@ rule cleanMissingHwe:
 		bcftools=config['BCFTOOLS'],
 		hwe_thr=gonfig.get(rules).get("cleanMissingHwe").get("hwe_thr"),
 		missing_thr=gonfig.get(rules).get("cleanMissingHwe").get("missing_thr"),
+		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call")
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHwe.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHwe.e"
@@ -26,6 +30,7 @@ rule cleanMissingHwe:
 	shell:
 		"""
 		{params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --recode --recode-INFO-all -c | {params.bcftools} view -O z -o {output[0]} 1> {log[0]} 2> {log[1]}
+		{params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --removed-sites --out {params.out_prefix} 1>> {log[0]} 2>> {log[1]}
 		{params.bcftools} index -t {output[0]}
 		"""
 
