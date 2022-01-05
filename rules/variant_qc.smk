@@ -13,8 +13,8 @@ rule cleanMissingHwe:
 	params:
 		vcftools=config['VCFTOOLS'],
 		bcftools=config['BCFTOOLS'],
-		hwe_thr=config.get(rules).get("cleanMissingHwe").get("hwe_thr"),
-		missing_thr=config.get(rules).get("cleanMissingHwe").get("missing_thr"),
+		hwe_thr=config.get("rules").get("cleanMissingHwe").get("hwe_thr"),
+		missing_thr=config.get("rules").get("cleanMissingHwe").get("missing_thr"),
 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call")
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHwe.log",
