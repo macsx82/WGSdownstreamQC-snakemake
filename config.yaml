@@ -24,7 +24,7 @@ paths:
   benchmark: "" #base path for benchmark folder
   tmp: "" #base path for tmp folder
   1000G_ref_for_king: "" #files reference for king pca projection
-
+  1000G_EUR_freqs: ""
 ##### Rules specific options #####
 rules:
   reapplyVQSRsnps:
