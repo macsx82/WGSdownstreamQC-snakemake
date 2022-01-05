@@ -23,6 +23,7 @@ paths:
   log_dir: "" #base path for log folder
   benchmark: "" #base path for benchmark folder
   tmp: "" #base path for tmp folder
+  1000G_ref_for_king: "" #files reference for king pca projection
 
 ##### Rules specific options #####
 rules:
@@ -34,14 +35,22 @@ rules:
     out_dir: "01.VQSR_reapply"
   mergeReapplyVQSR:
     out_dir: "01.VQSR_reapply"
+  cleanMissingHwe:
+    hwe_thr: "0.00000001" #default threshold for HWE p-value set to 1e-8, to exclude all sites with a more significant pvalue
+    missing_thr: "0.05" #default value set to allow maximum 5% of missing rate among variants (95% call rate)
+    out_dir: "02.sites/HweMissingClean"
+  VariantsHetRate:
+    out_dir: "02.sites/HetRate"
   singletons:
-    out_dir: "02.samples/singletons"
+    out_dir: "03.samples/singletons"
   coverage:
-    out_dir: "02.samples/coverage"
+    out_dir: "03.samples/coverage"
   SampleHetRate:
-    out_dir: "02.samples/HetRate"
+    out_dir: "03.samples/HetRate"
   SampleMissingRate:
-    out_dir: "02.samples/MissingRate"
+    out_dir: "03.samples/MissingRate"
+  kingPCA:
+    out_dir: "03.samples/PCA"
   stats:
     out_dir: "05.stats"
 
@@ -51,3 +60,5 @@ SAMBAMBA_TOOL: "sambamba"
 BCFTOOLS: "bcftools"
 VCFTOOLS: "vcftools"
 BEDTOOLS: "bedtools"
+PLINK: "plink"
+KING: "king"

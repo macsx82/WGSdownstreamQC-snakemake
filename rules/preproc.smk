@@ -22,7 +22,6 @@ rule reapplyVQSRsnps:
 	shell:
 		"""
 		{params.bcftools_bin} view -i 'VQSLOD >= {params.vqslod_thr}' -v snps {input} -O z -o {output}
-
 		"""
 
 #Rule to apply a more stringen VQSLOD filter, if needed, to indels
@@ -52,8 +51,6 @@ rule reapplyVQSRindels:
 #Rule to concat again the refiltered data
 rule mergeReapplyVQSR:
 	output:
-		# os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz"),
-		# os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), PROJECT_NAME + "_MERGED_VQSLODrefilter.vcf.gz.tbi")
 		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}.vcf.gz"),
 		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}.vcf.gz.tbi")
 	input:
@@ -79,6 +76,3 @@ rule mergeReapplyVQSR:
 		{params.bcftools} concat {input.vcf_snps} {input.vcf_indels}| {params.bcftools} sort -T ${{temp}} | {params.bcftools} norm -f {params.ref_genome} -O z -o {output[0]} > {log[0]} 2> {log[1]}
         {params.bcftools} index -t {output[0]}
 		"""
-
-
-

@@ -25,6 +25,10 @@ MAIN_VCF_INPUT=config["paths"]["input_vcf"]
 chroms=config["chrs"]
 PROJECT_NAME=config["project_name"]
 out_prefix=PROJECT_NAME + "_MERGED"
+### path to resources needed for plots
+tgFreqs = config['paths']['1000G_EUR_freqs']
+tgRefBed = config['paths']['1000G_ref_for_king']
+
 ##### functions #####
 include:
     "scripts/functions.py"
@@ -36,10 +40,9 @@ localrules: all
 rule all:
     input:
         #define target input
-        # expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"])
         expand(os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz"), vcf_name=out_prefix),
-        # expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"]),
         expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_initial.stats"), vcf_name=out_prefix),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.{ext}"),vcf_name=out_prefix, ext=["vcf.gz", "vcf.gz.tbi"]),
         expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"],vcf_name=out_prefix),
         expand(os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{vcf_name}_dp.{ext}"), ext=["idepth", "log"],vcf_name=out_prefix),
         expand(os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{vcf_name}_missing.{ext}"), ext=["imiss", "log"],vcf_name=out_prefix),
@@ -49,11 +52,11 @@ rule all:
 include:
     include_prefix + "/preproc.smk"
 include:
-    include_prefix + "/sample_qc.smk"
+    include_prefix + "/variant_qc.smk"
 include:
     include_prefix + "/vcf_stats.smk"
-# include:
-#     include_prefix + "/variant_qc.smk"
+include:
+    include_prefix + "/sample_qc.smk"
 # include:
 #     include_prefix + "/nrdr.smk"
 

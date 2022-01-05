@@ -2,13 +2,13 @@
 
 #extract singleton count for each sample
 rule singletons:
-	# wildcard_constraints:
-	# 	vcf_name=''
 	output:
 		expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{{vcf_name}}_singletons.{ext}"), ext=["singletons", "log"])
 	input:
-		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
-		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
+		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		vcf=rules.cleanMissingHwe.output[0],
+		vcf_index=rules.cleanMissingHwe.output[0]
 	params:
 		bcftools=config['BCFTOOLS'],
 		vcftools=config['VCFTOOLS'],
@@ -34,8 +34,10 @@ rule SampleHetRate:
 	output:
 		expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{{vcf_name}}_het.{ext}"), ext=["het", "log"])
 	input:
-		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
-		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
+		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		vcf=rules.cleanMissingHwe.output[0],
+		vcf_index=rules.cleanMissingHwe.output[0]
 	params:
 		bcftools=config['BCFTOOLS'],
 		vcftools=config['VCFTOOLS'],
@@ -75,15 +77,16 @@ rule SampleGetHetRateOut:
 	run:
 		get_het_sample_outliers(input[0], output[0])
 
-
 #we may need data from varcall pipeline
 #or we can use Read Depth by Sample
 rule sampleDP:
 	output:
 		expand(os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{{vcf_name}}_dp.{ext}"), ext=["idepth", "log"])
 	input:
-		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
-		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
+		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		vcf=rules.cleanMissingHwe.output[0],
+		vcf_index=rules.cleanMissingHwe.output[0]
 	params:
 		bcftools=config['BCFTOOLS'],
 		vcftools=config['VCFTOOLS'],
@@ -120,8 +123,10 @@ rule SampleMissingRate:
 	output:
 		expand(os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{{vcf_name}}_missing.{ext}"), ext=["imiss", "log"])
 	input:
-		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
-		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
+		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		vcf=rules.cleanMissingHwe.output[0],
+		vcf_index=rules.cleanMissingHwe.output[0]		
 	params:
 		bcftools=config['BCFTOOLS'],
 		vcftools=config['VCFTOOLS'],
@@ -141,16 +146,3 @@ rule SampleMissingRate:
 		"""
 		{params.vcftools} --gzvcf {input.vcf} --missing-indv --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
-
-# rule PCA:
-# 	output:
-# 	input:
-# 	params:
-# 	log:
-# 	threads:
-# 	resources:
-# 	benchmark:
-# 	shell:
-
-
-
