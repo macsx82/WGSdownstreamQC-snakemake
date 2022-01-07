@@ -41,6 +41,8 @@ rules:
     out_dir: "02.sites/HweMissingClean"
   VariantsHetRate:
     out_dir: "02.sites/HetRate"
+  VariantsMissingRate:
+    out_dir: "02.sites/MissingRate"
   singletons:
     out_dir: "03.samples/singletons"
   coverage:

@@ -6,7 +6,6 @@ rule cleanMissingHwe:
 		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz.tbi"),
 		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.removed.sites"),
 		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.log")
-
 	input:
 		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
@@ -82,28 +81,30 @@ rule VariantsHetRate:
 # 		get_het_sample_outliers(input[0], output[0])
 
 #Missing rate rule
-# rule VariantsMissingRate:
-# 	output:
-# 		expand(os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{{vcf_name}}_missing.{ext}"), ext=["imiss", "log"])
-# 	input:
-# 		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
-# 		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
-# 	params:
-# 		bcftools=config['BCFTOOLS'],
-# 		vcftools=config['VCFTOOLS'],
-# 		tmp=os.path.join(BASE_OUT,config.get("paths").get("tmp")),
-# 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{vcf_name}_missing")
-# 	log:
-# 		config["paths"]["log_dir"] + "/{vcf_name}-sampleMissing.log",
-# 		config["paths"]["log_dir"] + "/{vcf_name}-sampleMissing.e"
-# 	threads: 1
-# 	resources:
-# 		mem_mb=5000
-# 	benchmark:
-# 		config["paths"]["benchmark"] + "/{vcf_name}_sampleMissing.tsv"
-# 	envmodules:
-# 		"vcftools/0.1.16"
-# 	shell:
-# 		"""
-# 		{params.vcftools} --gzvcf {input.vcf} --missing-indv --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
-# 		"""
+rule VariantsMissingRate:
+	output:
+		expand(os.path.join(BASE_OUT,config.get("rules").get("VariantsMissingRate").get("out_dir"), "{{vcf_name}}_missing.{ext}"), ext=["lmiss", "log"])
+	input:
+		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
+		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		vcf=rules.cleanMissingHwe.output[0],
+		vcf_index=rules.cleanMissingHwe.output[0]
+	params:
+		bcftools=config['BCFTOOLS'],
+		vcftools=config['VCFTOOLS'],
+		tmp=os.path.join(BASE_OUT,config.get("paths").get("tmp")),
+		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("VariantsMissingRate").get("out_dir"), "{vcf_name}_missing")
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-variantsMissing.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-variantsMissing.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_variantsMissing.tsv"
+	envmodules:
+		"vcftools/0.1.16"
+	shell:
+		"""
+		{params.vcftools} --gzvcf {input.vcf} --missing-site --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
+		"""
