@@ -69,10 +69,12 @@ rule mergeReapplyVQSR:
 		"bcftools/1.14"
 	resources:
 		mem_mb=10000
+	threads: 3
 	message: """ Merge back refiltered data """
 	shell:
 		"""
 		temp=$(mktemp -u -d -p {params.tmp})
-		{params.bcftools} concat {input.vcf_snps} {input.vcf_indels}| {params.bcftools} sort -T ${{temp}} | {params.bcftools} norm -f {params.ref_genome} -O z -o {output[0]} > {log[0]} 2> {log[1]}
+		{params.bcftools} concat {input.vcf_snps} {input.vcf_indels}| {params.bcftools} sort -T ${{temp}} | {params.bcftools} norm -f {params.ref_genome} -O z -o {output[0]}
         {params.bcftools} index -t {output[0]}
 		"""
+		# {params.bcftools} concat {input.vcf_snps} {input.vcf_indels}| {params.bcftools} sort -T ${{temp}} | {params.bcftools} norm -f {params.ref_genome} -O z -o {output[0]} > {log[0]} 2> {log[1]}
