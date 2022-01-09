@@ -51,11 +51,11 @@ rule reapplyVQSRindels:
 #Rule to concat again the refiltered data
 rule mergeReapplyVQSR:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}.vcf.gz"),
-		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}.vcf.gz.tbi")
+		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz"),
+		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz.tbi")
 	input:
-		vcf_snps=rules.reapplyVQSRsnps.output,
-		vcf_indels=rules.reapplyVQSRindels.output
+		vcf_snps=rules.reapplyVQSRsnps.output[0],
+		vcf_indels=rules.reapplyVQSRindels.output[0]
 	params:
 		bcftools=config.get("BCFTOOLS"),
 		tmp=config.get("paths").get("tmp"),

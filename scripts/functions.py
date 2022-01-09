@@ -76,8 +76,8 @@ def get_hetrate_variants(obs_col):
 	sum_hom=rr+aa
 	sum_geno=sum_hom+ra
 	#get genotype heterozygosity rate
-	if sum_geno == 0:
-		print(obs_col)
+	# if sum_geno == 0:
+	# 	print(obs_col)
 	het_rate=ra/sum_geno
 	return het_rate
 

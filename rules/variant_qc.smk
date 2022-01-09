@@ -61,7 +61,7 @@ rule VariantsHetRate:
 		{params.vcftools} --gzvcf {input.vcf} --hardy --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
 
-#het rate rule: get vcftools result and extract the het rate for plotting
+# #het rate rule: get vcftools result and extract the het rate for plotting
 # rule VariantsGetHetRateOut:
 # 	output:
 # 		os.path.join(BASE_OUT,config.get("rules").get("VariantsHetRate").get("out_dir"), "{vcf_name}_hetRate.txt")
