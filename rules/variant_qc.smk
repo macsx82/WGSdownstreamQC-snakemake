@@ -116,7 +116,7 @@ rule getPopAF:
 	input:
 		vcf=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz"),
 		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz.tbi")
-	params
+	params:
 		bcftools=config['BCFTOOLS']
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-getPopAF.log",
