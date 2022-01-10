@@ -138,25 +138,25 @@ rule getPopAF:
 #merge pop data with data from TGP and EUR only data
 rule comparePopAF:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_af_extrDiff.txt"),
-		os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_af.pdf")
+		os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.txt"),
+		os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af.pdf")
 		# expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
 		# expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys()))
 	input:
 		wgs_table=rules.getPopAF.output[0]
 	params:
-		ext_table=lambda wildcards: config.get("rules").get("comparePopAF").get("ref_pops").get(wildcards.ext_ref),
+		ext_table=lambda wildcards: config.get("rules").get("comparePopAF").get("ref_pops").get(wildcards.ref_pop),
 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"))
 		# out_tab=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"),
 		# out_plot=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf")
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}_{ext_ref}-comparePopAF.log",
-		config["paths"]["log_dir"] + "/{vcf_name}_{ext_ref}-comparePopAF.e"
+		config["paths"]["log_dir"] + "/{vcf_name}_{ref_pop}-comparePopAF.log",
+		config["paths"]["log_dir"] + "/{vcf_name}_{ref_pop}-comparePopAF.e"
 	threads: 1
 	resources:
 		mem_mb=10000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_{ext_ref}_comparePopAF.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_{ref_pop}_comparePopAF.tsv"
 	run:
 		# for ext_table in ext_tables.keys():
 		outname_tab=params.out_prefix + "/"+ wildcards.vcf_name + "_" + params.ext_table + "_af_extrDiff.txt"
