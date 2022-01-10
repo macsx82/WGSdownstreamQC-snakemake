@@ -157,8 +157,6 @@ rule comparePopAF:
 		mem_mb=10000
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_{ext_ref}_comparePopAF.tsv"
-	envmodules:
-		"bcftools/1.14"
 	run:
 		# for ext_table in ext_tables.keys():
 		outname_tab=params.out_prefix + "/"+ wildcards.vcf_name + "_" + params.ext_table + "_af_extrDiff.txt"
