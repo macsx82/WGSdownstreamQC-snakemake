@@ -32,6 +32,9 @@ tgRefBed = config['paths']['1000G_ref_for_king']
 ref_pop=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())
 print(ref_pop)
 
+##### global wildcard costraints #####
+wildcard_constraints:
+    vcf_name='\s+_MERGED'
 ##### functions #####
 include:
     "scripts/functions.py"
