@@ -138,13 +138,16 @@ rule getPopAF:
 #merge pop data with data from TGP and EUR only data
 rule comparePopAF:
 	output:
-		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_af_extrDiff.txt"), vcf_name=out_prefix, ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
-		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_af.pdf"), vcf_name=out_prefix, ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys()))
+		# expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_af_extrDiff.txt"), vcf_name=out_prefix, ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
+		# expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_af.pdf"), vcf_name=out_prefix, ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys()))
+		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
+		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys()))
+
 	input:
 		wgs_table=rules.getPopAF.output[0]
 	params:
 		ext_tables=config.get("rules").get("comparePopAF").get("ref_pops"),
-		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir")),
+		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"))
 		# out_tab=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"),
 		# out_plot=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf")
 	log:
@@ -159,6 +162,6 @@ rule comparePopAF:
 		"bcftools/1.14"
 	run:
 		for ext_table in ext_tables.keys():
-			outname_tab=params.out_prefix + "/{wildcards.vcf_name}_" + ext_table + "_af_extrDiff.txt"
-			outname_plot=params.out_prefix + "/{wildcards.vcf_name}_" + ext_table + "_af.pdf"
+			outname_tab=params.out_prefix + "/"+ wildcards.vcf_name + "_" + ext_table + "_af_extrDiff.txt"
+			outname_plot=params.out_prefix + "/"+ wildcards.vcf_name + "_" + ext_table + "_af.pdf"
 			af_diff(input.wgs_table, ext_table, outname_tab, outname_plot)
