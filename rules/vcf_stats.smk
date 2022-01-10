@@ -1,5 +1,7 @@
 #generate stats for vcf files after phasing
 rule vcf_stats_initial:
+	wildcard_constraints:
+		vcf_name='\s+_MERGED'
 	output:
 		os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_initial.stats")
 	input:
