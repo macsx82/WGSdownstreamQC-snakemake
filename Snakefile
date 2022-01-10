@@ -25,6 +25,8 @@ MAIN_VCF_INPUT=config["paths"]["input_vcf"]
 chroms=config["chrs"]
 PROJECT_NAME=config["project_name"]
 out_prefix=PROJECT_NAME + "_MERGED"
+
+
 ### path to resources needed for plots
 tgRefBed = config['paths']['1000G_ref_for_king']
 ref_pop=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())
@@ -39,6 +41,8 @@ localrules: all
 
 ##### Target rules #####
 rule all:
+    wildcard_constraints:
+        vcf_name='\s+_MERGED'
     input:
         #define target input
         expand(os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz"), vcf_name=out_prefix),
