@@ -46,6 +46,9 @@ rule all:
         expand(os.path.join(BASE_OUT,config.get("rules").get("VariantsMissingRate").get("out_dir"), "{vcf_name}_missing.{ext}"), ext=["lmiss", "log"],vcf_name=out_prefix),
         expand(os.path.join(BASE_OUT,config.get("rules").get("getPopAF").get("out_dir"), "{vcf_name}_af.txt"),vcf_name=out_prefix ),
         expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_{suffix}"),vcf_name=out_prefix, suffix=["af_extrDiff.txt","af.pdf"],ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3.{ext}"), ext=["vcf.gz","bed","bim","fam"],vcf_name=out_prefix),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpca{ext}"),ext=["pc.txt","projpc.txt","proj_Dist.txt","proj_popref.txt"],vcf_name=out_prefix),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_{ext}"),ext=["pca.png","pca_projection_on_1000GP.png"],vcf_name=out_prefix),
 
         #samples qc rules
         expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"],vcf_name=out_prefix),
@@ -58,6 +61,8 @@ include:
     include_prefix + "/preproc.smk"
 include:
     include_prefix + "/variant_qc.smk"
+include:
+    include_prefix + "/pca.smk"
 include:
     include_prefix + "/vcf_stats.smk"
 include:
