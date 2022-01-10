@@ -42,7 +42,7 @@ rule VariantsHetRate:
 		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
 		vcf=rules.cleanMissingHwe.output[0],
-		vcf_index=rules.cleanMissingHwe.output[0]
+		vcf_index=rules.cleanMissingHwe.output[1]
 	params:
 		vcftools=config['VCFTOOLS'],
 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("VariantsHetRate").get("out_dir"), "{vcf_name}_hwe")
@@ -88,7 +88,7 @@ rule VariantsMissingRate:
 		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
 		vcf=rules.cleanMissingHwe.output[0],
-		vcf_index=rules.cleanMissingHwe.output[0]
+		vcf_index=rules.cleanMissingHwe.output[1]
 	params:
 		bcftools=config['BCFTOOLS'],
 		vcftools=config['VCFTOOLS'],
@@ -114,9 +114,9 @@ rule getPopAF:
 	output:
 		os.path.join(BASE_OUT,config.get("rules").get("getPopAF").get("out_dir"), "{vcf_name}_af.txt")
 	input:
-		vcf=rules.cleanMissingHwe.output[0],
-		vcf_index=rules.cleanMissingHwe.output[1]
-	params:
+		vcf=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz"),
+		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz.tbi")
+	params
 		bcftools=config['BCFTOOLS']
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-getPopAF.log",
