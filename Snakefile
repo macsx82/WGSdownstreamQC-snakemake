@@ -26,7 +26,8 @@ chroms=config["chrs"]
 PROJECT_NAME=config["project_name"]
 out_prefix=PROJECT_NAME + "_MERGED"
 ### path to resources needed for plots
-tgFreqs = config['paths']['1000G_EUR_freqs']
+tg_subpopFreqs = config['paths']['1000G_subpop_freq']
+tg_allFreqs = config['paths']['TGP2504_freq']
 tgRefBed = config['paths']['1000G_ref_for_king']
 
 ##### functions #####
@@ -45,6 +46,8 @@ rule all:
         #Variants qc rules
         expand(os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.{ext}"),vcf_name=out_prefix, ext=["vcf.gz", "vcf.gz.tbi", "removed.sites","log"]),
         expand(os.path.join(BASE_OUT,config.get("rules").get("VariantsMissingRate").get("out_dir"), "{vcf_name}_missing.{ext}"), ext=["lmiss", "log"],vcf_name=out_prefix),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_{suffix}"),vcf_name=out_prefix, suffix=["af_extrDiff.txt","af.pdf"],ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
+
         #samples qc rules
         expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"],vcf_name=out_prefix),
         expand(os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{vcf_name}_dp.{ext}"), ext=["idepth", "log"],vcf_name=out_prefix),

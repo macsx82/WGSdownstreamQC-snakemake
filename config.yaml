@@ -24,7 +24,6 @@ paths:
   benchmark: "" #base path for benchmark folder
   tmp: "" #base path for tmp folder
   1000G_ref_for_king: "" #files reference for king pca projection
-  1000G_EUR_freqs: ""
 ##### Rules specific options #####
 rules:
   reapplyVQSRsnps:
@@ -43,6 +42,13 @@ rules:
     out_dir: "02.sites/HetRate"
   VariantsMissingRate:
     out_dir: "02.sites/MissingRate"
+  getPopAF:
+    out_dir: "02.sites/popAF"
+  comparePopAF:
+    ref_pops:
+      1000G_subpop_freq: "/storage/burlo/cocca/resources/1000GP_phase3_3202/vcf/EUR/EUR_normIndel_multiSplitted.vcf.gz.tab" #full path of the file containing AF information for fomparison with the study population. This file should be defined according to the main ancestri represented in your population
+      TGP2504_freq: "/storage/burlo/cocca/resources/1000GP_phase3_3202/vcf/TGP_2504/TGP2504_normIndel_multiSplitted.vcf.gz.tab" #full path of the file containing AF information for fomparison with the study population
+    out_dir: "02.sites/popAF"
   singletons:
     out_dir: "03.samples/singletons"
   coverage:

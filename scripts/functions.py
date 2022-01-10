@@ -11,7 +11,7 @@ import pathlib
 import psutil
 import re
 import sys
-
+import matplotlib.pyplot as plt
 
 
 #define some standard functions to retrieve files more easily
@@ -136,3 +136,32 @@ def get_het_hwe_variants_outliers(het_table, hwe_thr, out_file):
 	#now flag samples for exclusion if their het rate is outside the defined boundaries
 	het_df['het_rem']=het_df['het_rate'].apply(lambda x: flag_record_remove(x, het_up, het_down))
 	het_df.to_csv(out_file,sep="\t", index=False, header=True, float_format="%.4f")
+
+
+#function to generate a merged file with AF to plot
+def af_diff(wgs_table, ext_table, outfile, outplot):
+	# define the column header
+	col_head=['var_key','CHROM','POS','ID','REF','ALT','AC','AN','AF','MAF']
+	# wgs_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/01.VQSR_reapply/test_snps.tab"
+	# ext_table="/storage/burlo/cocca/resources/1000GP_phase3_3202/vcf/EUR/EUR_normIndel_multiSplitted.vcf.gz.tab"
+	wgs_df = pd.read_table(wgs_table,sep="\t", header=None,names=col_head)
+	ext_df = pd.read_table(ext_table,sep="\t", header=None,names=col_head)
+	# merge dataframes using the provided key
+	merged_df = wgs_df.merge(ext_df, how='inner',on='var_key')
+	#calculate the af difference
+	merged_df['af_diff'] = abs(merged_df['AF_x'] - merged_df['AF_y'])
+	#get the threshold value for the 99 percentile, which should contain the most differentiated snps in terms of AF
+	extreme_af_diff_thr=merged_df['af_diff'].quantile(0.99)
+	#now find all variants with the highest differences
+	extreme_diff_variants_df=merged_df[merged_df['af_diff'] >= extreme_af_diff_thr]
+	#now write the resulting table with the highest diff AF
+	extreme_diff_variants_df=extreme_diff_variants_df[['var_key', 'CHROM_x', 'POS_x', 'ID_x', 'REF_x', 'ALT_x', 'AC_x', 'AN_x', 'AF_x', 'MAF_x', 'AC_y', 'AN_y', 'AF_y', 'MAF_y', 'af_diff']]
+	#rename columns
+	extreme_diff_variants_df.columns = ['var_key', 'CHROM', 'POS', 'ID', 'REF', 'ALT', 'AC_wgs', 'AN_wgs', 'AF_wgs', 'MAF_wgs', 'AC_ext', 'AN_ext', 'AF_ext', 'MAF_ext', 'af_diff']
+	extreme_diff_variants_df.to_csv(outfile,sep="\t", index=False, header=True, float_format="%.4f")
+	#plot also the data, defining the point size based on the diff value
+	merged_df.plot.scatter(x='AF_x',y='AF_y',s=merged_df['af_diff'] * 100)
+	plt.xlabel("WGS AF")
+	plt.ylabel("EXT dataset AF")
+	# plt.savefig('test.pdf')
+	plt.savefig(outplot)

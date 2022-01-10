@@ -28,8 +28,8 @@ rule cleanMissingHwe:
 		"bcftools/1.14"
 	shell:
 		"""
-		{params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --recode --recode-INFO-all -c | {params.bcftools} view -O z -o {output[0]} 1> {log[0]} 2> {log[1]}
-		{params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --removed-sites --out {params.out_prefix} 1>> {log[0]} 2>> {log[1]}
+		({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --recode --recode-INFO-all -c | {params.bcftools} view -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
+		({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --removed-sites --out {params.out_prefix}) 1>> {log[0]} 2>> {log[1]}
 		{params.bcftools} index -t {output[0]}
 		"""
 
@@ -108,3 +108,55 @@ rule VariantsMissingRate:
 		"""
 		{params.vcftools} --gzvcf {input.vcf} --missing-site --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
+
+#extract AF from the  study population data
+rule getPopAF:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("getPopAF").get("out_dir"), "{vcf_name}_af.txt")
+	input:
+		vcf=rules.cleanMissingHwe.output[0],
+		vcf_index=rules.cleanMissingHwe.output[0]
+	params:
+		bcftools=config['BCFTOOLS']
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-getPopAF.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-getPopAF.e"
+	threads: 2
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcfname}_getPopAF.tsv"
+	envmodules:
+		"bcftools/1.14"
+	shell:
+		"""
+		({params.bcftools} +fill-tags {input.vcf} -- -t all | {params.bcftools} query -f "%CHROM\_%POS\_%REF\_%ALT\t%CHROM\t%POS\t%ID\t%REF\t%ALT\t%AC\t%AN\t%AF\t%MAF\n" -o {output}) 1> {log[0]} 2> {log[1]}
+		"""
+
+#merge pop data with data from TGP and EUR only data
+rule comparePopAF:
+	output:
+		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
+		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys()))
+	input:
+		wgs_table=rules.getPopAF.output[0]
+	params:
+		ext_tables=config.get("rules").get("comparePopAF").get("ref_pops"),
+		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir")),
+		# out_tab=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"),
+		# out_plot=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf")
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}_{ext_pop}-comparePopAF.log",
+		config["paths"]["log_dir"] + "/{vcf_name}_{ext_pop}-comparePopAF.e"
+	threads: 1
+	resources:
+		mem_mb=10000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcfname}_{ext_pop}_comparePopAF.tsv"
+	envmodules:
+		"bcftools/1.14"
+	run:
+		for ext_table in ext_tables.keys():
+			outname_tab=params.out_prefix + "/{vcf_name}_" + ext_table + "_af_extrDiff.txt"
+			outname_plot=params.out_prefix + "/{vcf_name}_" + ext_table + "_af.pdf"
+			af_diff(input.wgs_table, ext_table, outname_tab, outname_plot)
