@@ -115,7 +115,7 @@ rule getPopAF:
 		os.path.join(BASE_OUT,config.get("rules").get("getPopAF").get("out_dir"), "{vcf_name}_af.txt")
 	input:
 		vcf=rules.cleanMissingHwe.output[0],
-		vcf_index=rules.cleanMissingHwe.output[0]
+		vcf_index=rules.cleanMissingHwe.output[1]
 	params:
 		bcftools=config['BCFTOOLS']
 	log:
