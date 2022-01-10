@@ -141,7 +141,8 @@ rule comparePopAF:
 		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
 		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys()))
 	input:
-		wgs_table=rules.getPopAF.output[0]
+		# wgs_table=rules.getPopAF.output[0]
+		wgs_table=os.path.join(BASE_OUT,config.get("rules").get("getPopAF").get("out_dir"), "{vcf_name}_af.txt")
 	params:
 		ext_tables=config.get("rules").get("comparePopAF").get("ref_pops"),
 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir")),
