@@ -27,7 +27,7 @@ PROJECT_NAME=config["project_name"]
 out_prefix=PROJECT_NAME + "_MERGED"
 ### path to resources needed for plots
 tgRefBed = config['paths']['1000G_ref_for_king']
-ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())
+ref_pop=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())
 print(ext_ref)
 
 ##### functions #####
@@ -48,8 +48,8 @@ rule all:
         expand(os.path.join(BASE_OUT,config.get("rules").get("VariantsMissingRate").get("out_dir"), "{vcf_name}_missing.{ext}"), ext=["lmiss", "log"],vcf_name=out_prefix),
         expand(os.path.join(BASE_OUT,config.get("rules").get("getPopAF").get("out_dir"), "{vcf_name}_af.txt"),vcf_name=out_prefix ),
 
-        expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_af_extrDiff.txt"),vcf_name=out_prefix,ext_ref=ext_ref),
-        expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_af.pdf"),vcf_name=out_prefix, ext_ref=ext_ref),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.txt"),vcf_name=out_prefix,ref_pop=ref_pop),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af.pdf"),vcf_name=out_prefix, ref_pop=ref_pop),
         
         expand(os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3.{ext}"), ext=["vcf.gz","bed","bim","fam"],vcf_name=out_prefix),
         expand(os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpca{ext}"),ext=["pc.txt","projpc.txt","proj_Dist.txt","proj_popref.txt"],vcf_name=out_prefix),
