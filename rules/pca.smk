@@ -66,5 +66,5 @@ rule kingPCA:
 		"""
 		{params.king} -b {input.ibed} --mds --prefix {params.pca_pref} 1> {log[0]} 2> {log[1]}
 		{params.king} -b {params.tgRefBed},{input.ibed} --projection --mds --prefix {params.proj_pref} 1>> {log[0]} 2>> {log[1]}
-		Rscript --no-save scripts/PCA.R {data_name} {params.plot_dir} {params.pca_pref} {params.proj_pref} 1>> {log[0]} 2>> {log[1]}
+		Rscript --no-save scripts/PCA.R {wildcards.vcf_name} {params.plot_dir} {params.pca_pref} {params.proj_pref} 1>> {log[0]} 2>> {log[1]}
 		"""
