@@ -34,7 +34,7 @@ print(ref_pop)
 
 ##### global wildcard costraints #####
 wildcard_constraints:
-    vcf_name="\w+_MERGED$"
+    vcf_name=".+_MERGED$"
 ##### functions #####
 include:
     "scripts/functions.py"
