@@ -114,8 +114,10 @@ rule getPopAF:
 	output:
 		os.path.join(BASE_OUT,config.get("rules").get("getPopAF").get("out_dir"), "{vcf_name}_af.txt")
 	input:
-		vcf=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz"),
-		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz.tbi")
+		# vcf=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz"),
+		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz.tbi")
+		vcf=rules.cleanMissingHwe.output[0],
+		vcf_index=rules.cleanMissingHwe.output[1]
 	params:
 		bcftools=config['BCFTOOLS']
 	log:
@@ -125,7 +127,7 @@ rule getPopAF:
 	resources:
 		mem_mb=5000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcfname}_getPopAF.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_getPopAF.tsv"
 	envmodules:
 		"bcftools/1.14"
 	shell:
