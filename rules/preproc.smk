@@ -54,6 +54,8 @@ rule reapplyVQSRindels:
 
 #Rule to concat again the refiltered data
 rule mergeReapplyVQSR:
+	wildcard_constraints:
+		vcf_name='\s+_MERGED'
 	output:
 		# temp(os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_concatVQSLODrefilter.vcf.gz")),
 		# os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_concatVQSLODrefilter.vcf.gz"),
