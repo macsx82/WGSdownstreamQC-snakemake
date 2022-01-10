@@ -138,11 +138,10 @@ rule getPopAF:
 #merge pop data with data from TGP and EUR only data
 rule comparePopAF:
 	output:
-		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
-		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys()))
+		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_af_extrDiff.txt"), vcf_name=vcf_prefix, ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
+		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ext_ref}_af.pdf"), vcf_name=vcf_prefix, ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys()))
 	input:
-		# wgs_table=rules.getPopAF.output[0]
-		wgs_table=os.path.join(BASE_OUT,config.get("rules").get("getPopAF").get("out_dir"), "{vcf_name}_af.txt")
+		wgs_table=rules.getPopAF.output[0]
 	params:
 		ext_tables=config.get("rules").get("comparePopAF").get("ref_pops"),
 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir")),
