@@ -20,7 +20,7 @@ rule cleanPlinkFilesPCA:
 	resources:
 		mem_mb=5000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcfname}_cleanPlinkFilesPCA.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_cleanPlinkFilesPCA.tsv"
 	envmodules:
 		"plink/1.90",
 		"bcftools/1.14"
@@ -49,22 +49,22 @@ rule kingPCA:
 	input:
 		ibed=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3.bed")
 	params:
-		pca_pref="{w_dir}/01_intermediate_files_to_delete/11_pca/{data_name}_cleaned.LD0.3_kingpca",
-		proj_pref="{w_dir}/01_intermediate_files_to_delete/11_pca/{data_name}_cleaned.LD0.3_kingpcaproj",
-		plot_dir="{w_dir}/00_release/plots/",
+		pca_pref=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpca"),
+		proj_pref=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaproj"),
+		plot_dir=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir")),
 		tgRefBed=config.get("paths").get("1000G_ref_for_king"),
 		king=config['KING']
 	log:
-		stde="{w_dir}/00_release/logs/20_{data_name}_kingPCA.stderr",
-		stdo="{w_dir}/00_release/logs/20_{data_name}_kingPCA.stdout",
-		plot_stde="{w_dir}/00_release/logs/rplot_{data_name}_kingPCA.stderr",
-		plot_stdo="{w_dir}/00_release/logs/rplot_{data_name}_kingPCA.stdout"
-	threads:
+		config["paths"]["log_dir"] + "/{vcf_name}_kingPCA.log",
+		config["paths"]["log_dir"] + "/{vcf_name}_kingPCA.e"
+	threads: 1
 	resources:
+		mem_mb=5000
 	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_kingPCA.tsv"
 	shell:
 		"""
-		{params.king} -b {input.ibed} --mds --prefix {params.pca_pref} > {log.stdo} 2> {log.stde}
-		{params.king} -b {params.tgRefBed},{input.ibed} --projection --mds --prefix {params.proj_pref} >> {log.stdo} 2>> {log.stde}
-		Rscript --no-save scripts/PCA.R {data_name} {params.plot_dir} {params.pca_pref} {params.proj_pref} > {log.plot_stdo} 2> {log.plot_stde}
+		{params.king} -b {input.ibed} --mds --prefix {params.pca_pref} 1> {log[0]} 2> {log[1]}
+		{params.king} -b {params.tgRefBed},{input.ibed} --projection --mds --prefix {params.proj_pref} 1>> {log[0]} 2>> {log[1]}
+		Rscript --no-save scripts/PCA.R {data_name} {params.plot_dir} {params.pca_pref} {params.proj_pref} 1>> {log[0]} 2>> {log[1]}
 		"""
