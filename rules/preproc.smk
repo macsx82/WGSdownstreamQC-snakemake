@@ -51,6 +51,8 @@ rule reapplyVQSRindels:
 #Rule to concat again the refiltered data
 rule mergeReapplyVQSR:
 	output:
+		# temp(os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_concatVQSLODrefilter.vcf.gz")),
+		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_concatVQSLODrefilter.vcf.gz"),
 		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz"),
 		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz.tbi")
 	input:
@@ -74,7 +76,8 @@ rule mergeReapplyVQSR:
 	shell:
 		"""
 		temp=$(mktemp -u -d -p {params.tmp})
-		({params.bcftools} concat {input.vcf_snps} {input.vcf_indels}| {params.bcftools} sort -T ${{temp}} | {params.bcftools} norm -f {params.ref_genome} -O z -o {output[0]}) > {log[0]} 2> {log[1]}
-        {params.bcftools} index -t {output[0]}
+		{params.bcftools} concat {input.vcf_snps} {input.vcf_indels} -O z -o {output[0]} > {log[0]} 2> {log[1]}
+		({params.bcftools} sort -T ${{temp}} {output[0]} | {params.bcftools} norm -f {params.ref_genome} -O z -o {output[1]}) >> {log[0]} 2>> {log[1]}
+        {params.bcftools} index -t {output[1]}
 		"""
 		# {params.bcftools} concat {input.vcf_snps} {input.vcf_indels}| {params.bcftools} sort -T ${{temp}} -O z -o {output[0]} > {log[0]} 2> {log[1]}
