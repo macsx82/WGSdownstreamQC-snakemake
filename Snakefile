@@ -40,7 +40,7 @@ include:
     "scripts/functions.py"
 
 ##### local rules #####
-localrules: all
+# localrules: all
 
 ##### Target rules #####
 rule all:
