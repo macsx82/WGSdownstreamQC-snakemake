@@ -34,7 +34,7 @@ print(ref_pop)
 
 ##### global wildcard costraints #####
 wildcard_constraints:
-    vcf_name="\s+_MERGED"
+    vcf_name="\w+_MERGED$"
 ##### functions #####
 include:
     "scripts/functions.py"
@@ -44,8 +44,6 @@ localrules: all
 
 ##### Target rules #####
 rule all:
-    wildcard_constraints:
-        vcf_name="\s+_MERGED"
     input:
         #define target input
         expand(os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz"), vcf_name=out_prefix),

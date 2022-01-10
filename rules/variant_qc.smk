@@ -1,8 +1,6 @@
 #this set of rules is devised in two sections:
 # 1) the first rule will perform the automatic removal of all sites with missing rate and hwe values exceeding some thresholds
 rule cleanMissingHwe:
-	wildcard_constraints:
-		vcf_name='\s+_MERGED'
 	output:
 		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz"),
 		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz.tbi"),
