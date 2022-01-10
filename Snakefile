@@ -26,8 +26,6 @@ chroms=config["chrs"]
 PROJECT_NAME=config["project_name"]
 out_prefix=PROJECT_NAME + "_MERGED"
 ### path to resources needed for plots
-tg_subpopFreqs = config['paths']['1000G_subpop_freq']
-tg_allFreqs = config['paths']['TGP2504_freq']
 tgRefBed = config['paths']['1000G_ref_for_king']
 
 ##### functions #####
