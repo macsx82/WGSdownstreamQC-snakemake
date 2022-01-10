@@ -1,6 +1,6 @@
 #module containing preprocessing rules for the last downstream QC on WGS data
-wildcard_constraints:
-    vcf_name="\w+_MERGED$"
+# wildcard_constraints:
+#     vcf_name="\w+_MERGED$"
     
 #Rule to apply a more stringen VQSLOD filter, if needed, to snps
 rule reapplyVQSRsnps:
