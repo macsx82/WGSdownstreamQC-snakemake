@@ -159,6 +159,6 @@ rule comparePopAF:
 		"bcftools/1.14"
 	run:
 		for ext_table in ext_tables.keys():
-			outname_tab=params.out_prefix + "/{vcf_name}_" + ext_table + "_af_extrDiff.txt"
-			outname_plot=params.out_prefix + "/{vcf_name}_" + ext_table + "_af.pdf"
+			outname_tab=params.out_prefix + "/{wildcards.vcf_name}_" + ext_table + "_af_extrDiff.txt"
+			outname_plot=params.out_prefix + "/{wildcards.vcf_name}_" + ext_table + "_af.pdf"
 			af_diff(input.wgs_table, ext_table, outname_tab, outname_plot)
