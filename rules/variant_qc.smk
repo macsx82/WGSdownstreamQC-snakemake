@@ -148,13 +148,13 @@ rule comparePopAF:
 		# out_tab=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"),
 		# out_plot=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf")
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}_{ext_pop}-comparePopAF.log",
-		config["paths"]["log_dir"] + "/{vcf_name}_{ext_pop}-comparePopAF.e"
+		config["paths"]["log_dir"] + "/{vcf_name}_{ext_ref}-comparePopAF.log",
+		config["paths"]["log_dir"] + "/{vcf_name}_{ext_ref}-comparePopAF.e"
 	threads: 1
 	resources:
 		mem_mb=10000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcfname}_{ext_pop}_comparePopAF.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_{ext_ref}_comparePopAF.tsv"
 	envmodules:
 		"bcftools/1.14"
 	run:
