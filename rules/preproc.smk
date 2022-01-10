@@ -3,7 +3,8 @@
 #Rule to apply a more stringen VQSLOD filter, if needed, to snps
 rule reapplyVQSRsnps:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRsnps").get("out_dir"), PROJECT_NAME + "_snps_VQSLODrefilter.vcf.gz")
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRsnps").get("out_dir"), PROJECT_NAME + "_snps_VQSLODrefilter.vcf.gz"),
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRsnps").get("out_dir"), PROJECT_NAME + "_snps_VQSLODrefilter.vcf.gz.tbi")
 	input:
 		MAIN_VCF_INPUT
 	params:
@@ -21,13 +22,15 @@ rule reapplyVQSRsnps:
 	message: """ Filter SNPs """
 	shell:
 		"""
-		{params.bcftools_bin} view -i 'VQSLOD >= {params.vqslod_thr}' -v snps {input} -O z -o {output}
+		{params.bcftools_bin} view -i 'VQSLOD >= {params.vqslod_thr}' -v snps {input} -O z -o {output[0]}
+		{params.bcftools_bin} index -t {output[0]}
 		"""
 
 #Rule to apply a more stringen VQSLOD filter, if needed, to indels
 rule reapplyVQSRindels:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRindels").get("out_dir"), PROJECT_NAME + "_indels_VQSLODrefilter.vcf.gz")
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRindels").get("out_dir"), PROJECT_NAME + "_indels_VQSLODrefilter.vcf.gz"),
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRindels").get("out_dir"), PROJECT_NAME + "_indels_VQSLODrefilter.vcf.gz.tbi")
 	input:
 		MAIN_VCF_INPUT
 	params:
@@ -45,7 +48,8 @@ rule reapplyVQSRindels:
 	message: """ Filter INDELs """
 	shell:
 		"""
-		{params.bcftools_bin} view -i 'VQSLOD >= {params.vqslod_thr}' -v indels {input} -O z -o {output}
+		{params.bcftools_bin} view -i 'VQSLOD >= {params.vqslod_thr}' -v indels {input} -O z -o {output[0]}
+		{params.bcftools_bin} index -t {output[0]}
 		"""
 
 #Rule to concat again the refiltered data
