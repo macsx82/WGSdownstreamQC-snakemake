@@ -38,6 +38,8 @@ wildcard_constraints:
 ##### functions #####
 include:
     "scripts/functions.py"
+include:
+    "scripts/PCA.py"
 
 ##### local rules #####
 # localrules: all
