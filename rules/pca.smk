@@ -38,8 +38,8 @@ rule kingPCA:
 		proj_pc=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaprojpc.txt"),
 		proj_dist=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaproj_Dist.txt"),
 		proj_popref=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaproj_popref.txt"),
-		plot_pca=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_pca.png"),
-		plot_pcaproj=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_pca_projection_on_1000GP.png")
+		# plot_pca=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_pca.png"),
+		# plot_pcaproj=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_pca_projection_on_1000GP.png")
 		# pc="{w_dir}/01_intermediate_files_to_delete/11_pca/{data_name}_cleaned.LD0.3_kingpcapc.txt",
 		# proj_pc="{w_dir}/01_intermediate_files_to_delete/11_pca/{data_name}_cleaned.LD0.3_kingpcaprojpc.txt",
 		# proj_dist="{w_dir}/01_intermediate_files_to_delete/11_pca/{data_name}_cleaned.LD0.3_kingpcaproj_Dist.txt",
