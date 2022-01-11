@@ -37,7 +37,8 @@ rule cleanMissingHwe:
 #het rate rule: first get the data with vcftools
 rule VariantsHetRate:
 	output:
-		expand(os.path.join(BASE_OUT,config.get("rules").get("VariantsHetRate").get("out_dir"), "{{vcf_name}}_hwe.{ext}"), ext=["hwe", "log"])
+		os.path.join(BASE_OUT,config.get("rules").get("VariantsHetRate").get("out_dir"), "{vcf_name}_hwe.hwe")
+		# expand(os.path.join(BASE_OUT,config.get("rules").get("VariantsHetRate").get("out_dir"), "{{vcf_name}}_hwe.{ext}"), ext=["hwe", "log"])
 	input:
 		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
@@ -83,7 +84,8 @@ rule VariantsHetRate:
 #Missing rate rule
 rule VariantsMissingRate:
 	output:
-		expand(os.path.join(BASE_OUT,config.get("rules").get("VariantsMissingRate").get("out_dir"), "{{vcf_name}}_missing.{ext}"), ext=["lmiss", "log"])
+		os.path.join(BASE_OUT,config.get("rules").get("VariantsMissingRate").get("out_dir"), "{vcf_name}_missing.lmiss")
+		# expand(os.path.join(BASE_OUT,config.get("rules").get("VariantsMissingRate").get("out_dir"), "{{vcf_name}}_missing.{ext}"), ext=["lmiss", "log"])
 	input:
 		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
