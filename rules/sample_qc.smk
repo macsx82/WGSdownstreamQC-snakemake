@@ -4,7 +4,7 @@
 rule singletons:
 	output:
 		# expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{{vcf_name}}_singletons.{ext}"), ext=["singletons", "log"])
-		os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{{vcf_name}}_singletons.singletons")
+		os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.singletons")
 	input:
 		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
