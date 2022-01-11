@@ -99,43 +99,43 @@ def get_het_sample_outliers(het_table, out_file):
 	het_df.to_csv(out_file,sep="\t", index=False, header=True, float_format="%.4f")
 
 #function to flag samples with too many singletons based on the singleton distribution
-def get_singleton_sample_outliers(singleton_table, out_file):
-	#we need to read the het table and calculate:
-	het_df = pd.read_table(het_table, sep="\t", header=0)
-	# 1) het rate
-	het_df['het_rate'] = (het_df['N_SITES'] - het_df['O(HOM)']) / het_df['N_SITES']
-	# 2) mean
-	het_mean = het_df['het_rate'].mean()
-	# 3) sd
-	het_sd = het_df['het_rate'].std()
-	# 4) upper and lower threshold for samples flag
-	het_up = het_mean + 5 * het_sd
-	het_down = het_mean - 5 * het_sd
-	#now flag samples for exclusion if their het rate is outside the defined boundaries
-	het_df['het_rem']=het_df['het_rate'].apply(lambda x: flag_record_remove(x, het_up, het_down))
-	het_df.to_csv(out_file,sep="\t", index=False, header=True, float_format="%.4f")
+# def get_singleton_sample_outliers(singleton_table, out_file):
+# 	#we need to read the het table and calculate:
+# 	het_df = pd.read_table(het_table, sep="\t", header=0)
+# 	# 1) het rate
+# 	het_df['het_rate'] = (het_df['N_SITES'] - het_df['O(HOM)']) / het_df['N_SITES']
+# 	# 2) mean
+# 	het_mean = het_df['het_rate'].mean()
+# 	# 3) sd
+# 	het_sd = het_df['het_rate'].std()
+# 	# 4) upper and lower threshold for samples flag
+# 	het_up = het_mean + 5 * het_sd
+# 	het_down = het_mean - 5 * het_sd
+# 	#now flag samples for exclusion if their het rate is outside the defined boundaries
+# 	het_df['het_rem']=het_df['het_rate'].apply(lambda x: flag_record_remove(x, het_up, het_down))
+# 	het_df.to_csv(out_file,sep="\t", index=False, header=True, float_format="%.4f")
 
 
 #function to flag variants with heterozigosity rate higher or lower than 5 SD from the mean
-def get_het_hwe_variants_outliers(het_table, hwe_thr, out_file):
-	#we need to read the het table and calculate:
-	# het_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/03.het/ALL_JOINT_744_callset_sorted_variants_het.hwe"
-	het_df = pd.read_table(het_table, sep="\t", header=0)
-	# 1) Flag sites for removal for HWE pval threshold
-	# hwe_thr=0.00000001
-	het_df['hwe_rem']=het_df['P_HWE'].apply(lambda x: flag_record_remove(x, [hwe_thr] , 'lt'))
-	# 1) het rate
-	het_df['hwe_rate']=het_df['OBS(HOM1/HET/HOM2)'].apply(lambda x: get_hetrate_variants(x))
-	# 2) mean
-	het_mean = het_df['het_rate'].mean()
-	# 3) sd
-	het_sd = het_df['het_rate'].std()
-	# 4) upper and lower threshold for samples flag
-	het_up = het_mean + 5 * het_sd
-	het_down = het_mean - 5 * het_sd
-	#now flag samples for exclusion if their het rate is outside the defined boundaries
-	het_df['het_rem']=het_df['het_rate'].apply(lambda x: flag_record_remove(x, het_up, het_down))
-	het_df.to_csv(out_file,sep="\t", index=False, header=True, float_format="%.4f")
+# def get_het_hwe_variants_outliers(het_table, hwe_thr, out_file):
+# 	#we need to read the het table and calculate:
+# 	# het_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/03.het/ALL_JOINT_744_callset_sorted_variants_het.hwe"
+# 	het_df = pd.read_table(het_table, sep="\t", header=0)
+# 	# 1) Flag sites for removal for HWE pval threshold
+# 	# hwe_thr=0.00000001
+# 	het_df['hwe_rem']=het_df['P_HWE'].apply(lambda x: flag_record_remove(x, [hwe_thr] , 'lt'))
+# 	# 1) het rate
+# 	het_df['hwe_rate']=het_df['OBS(HOM1/HET/HOM2)'].apply(lambda x: get_hetrate_variants(x))
+# 	# 2) mean
+# 	het_mean = het_df['het_rate'].mean()
+# 	# 3) sd
+# 	het_sd = het_df['het_rate'].std()
+# 	# 4) upper and lower threshold for samples flag
+# 	het_up = het_mean + 5 * het_sd
+# 	het_down = het_mean - 5 * het_sd
+# 	#now flag samples for exclusion if their het rate is outside the defined boundaries
+# 	het_df['het_rem']=het_df['het_rate'].apply(lambda x: flag_record_remove(x, het_up, het_down))
+# 	het_df.to_csv(out_file,sep="\t", index=False, header=True, float_format="%.4f")
 
 
 #function to generate a merged file with AF to plot
@@ -184,10 +184,22 @@ def plot_sing_vs_cov(sing_table, cov_table, outplot,out_table):
 	merged_df = sing_number.merge(cov_df, how='inner',on='INDV')
 	#rename columns
 	merged_df.columns = ['INDV','SINGLETONS','N_SITES','MEAN_DEPTH']
+	# tag also samples with putative singletons excess based on singletons distributions
+	#mean
+	sing_mean = merged_df['SINGLETONS'].mean()
+	#sd
+	sing_sd = merged_df['SINGLETONS'].std()
+	# 4) upper and lower threshold for samples flag
+	sing_up = sing_mean + 3 * sing_sd
+	sing_down = sing_mean - 3 * sing_sd
+	#now flag samples for exclusion if their het rate is outside the defined boundaries
+	merged_df['sing_rem']=merged_df['SINGLETONS'].apply(lambda x: flag_record_remove(x, [sing_up, sing_down], 'both'))
+	#add singleton_rate column (over total number sites per sample)
+	merged_df['sing_rate']= merged_df.SINGLETONS/merged_df.N_SITES
 	#save also the merged table
 	merged_df.to_csv(out_table,sep="\t", index=False, header=True, float_format="%.4f")
 	#plot the data, defining the point size based on the diff value
-	merged_df.plot.scatter(x='SINGLETONS',y='MEAN_DEPTH',s=merged_df['SINGLETONS'] * 0.1)
+	merged_df.plot.scatter(x='SINGLETONS',y='MEAN_DEPTH',s=merged_df['sing_rate'] * 2000)
 	plt.xlabel("SINGLETONS")
 	plt.ylabel("MEAN DEPTH")
 	plt.title("Singletons vs Mean Depth")
