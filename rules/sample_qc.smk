@@ -165,8 +165,6 @@ rule SingCovPlot:
 		mem_mb=5000
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_SingCovPlot.tsv"
-	envmodules:
-		"vcftools/0.1.16"
 	run:
 		logger = logging.getLogger('logging_test')
 		fh = logging.FileHandler(str(log[1]))
@@ -178,10 +176,6 @@ rule SingCovPlot:
 			logger.info('Starting operation!')
 			# do something
 			plot_sing_vs_cov(input.sample_singletons, input.sample_coverage, output[0],output[1])
-			# cp_bed_cmd="cp %s %s" %(input.bed_file,output[1])
-			# cp_fam_cmd="cp %s %s" %(input.fam_file,output[2])
-			# shell(cp_bed_cmd)
-			# shell(cp_fam_cmd)
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
