@@ -30,7 +30,7 @@ rule cleanMissingHwe:
 		"""
 		({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --recode --recode-INFO-all -c | {params.bcftools} view -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
 		({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --removed-sites --out {params.out_prefix}) 1>> {log[0]} 2>> {log[1]}
-		{params.bcftools} index -t {output[0]}
+		{params.bcftools} index -t {output[0]} 1>> {log[0]} 2>> {log[1]}
 		"""
 
 # 2) set of rules to calculate het rate and missing rate lists to be used as summary data and removal lists
