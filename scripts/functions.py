@@ -140,6 +140,8 @@ def get_het_hwe_variants_outliers(het_table, hwe_thr, out_file):
 
 #function to generate a merged file with AF to plot
 def af_diff(wgs_table, ext_table, outfile, outplot):
+	#try to fix X11 error
+	matplotlib.use('Agg')
 	# define the column header
 	col_head=['var_key','CHROM','POS','ID','REF','ALT','AC','AN','AF','MAF']
 	# wgs_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/01.VQSR_reapply/test_snps.tab"
