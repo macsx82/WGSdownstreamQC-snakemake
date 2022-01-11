@@ -94,7 +94,23 @@ rule kingPCAplot:
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_kingPCAplot.tsv"
 	run:
-		PCAplots(params.plot_dir,input.pc,input.proj_pc,input.proj_popref)
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[0]))
+		fh.setLevel(logging.INFO)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			PCAplots(params.plot_dir,input.pc,input.proj_pc,input.proj_popref)
+			# cp_bed_cmd="cp %s %s" %(input.bed_file,output[1])
+			# cp_fam_cmd="cp %s %s" %(input.fam_file,output[2])
+			# shell(cp_bed_cmd)
+			# shell(cp_fam_cmd)
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
 		# """
 		# {params.king} -b {input.ibed} --mds --prefix {params.pca_pref} 1> {log[0]} 2> {log[1]}
 		# {params.king} -b {params.tgRefBed},{input.ibed} --projection --mds --prefix {params.proj_pref} 1>> {log[0]} 2>> {log[1]}

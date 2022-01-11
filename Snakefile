@@ -11,6 +11,7 @@ import io
 import os
 import os.path
 import re
+import logging
 from snakemake.exceptions import print_exception, WorkflowError
 from snakemake.utils import validate, min_version
 
@@ -30,7 +31,6 @@ out_prefix=PROJECT_NAME + "_MERGED"
 ### path to resources needed for plots
 tgRefBed = config['paths']['1000G_ref_for_king']
 ref_pop=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())
-print(ref_pop)
 
 ##### global wildcard costraints #####
 wildcard_constraints:

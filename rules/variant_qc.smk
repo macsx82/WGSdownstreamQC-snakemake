@@ -163,4 +163,18 @@ rule comparePopAF:
 		# for ext_table in ext_tables.keys():
 		outname_tab=params.out_prefix + "/"+ wildcards.vcf_name + "_" + params.ext_table + "_af_extrDiff.txt"
 		outname_plot=params.out_prefix + "/"+ wildcards.vcf_name + "_" + params.ext_table + "_af.pdf"
-		af_diff(input.wgs_table, ext_table, outname_tab, outname_plot)
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[0]))
+		fh.setLevel(logging.INFO)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			af_diff(input.wgs_table, ext_table, outname_tab, outname_plot)
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
+
+
