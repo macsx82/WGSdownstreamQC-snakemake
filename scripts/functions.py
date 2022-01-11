@@ -167,3 +167,29 @@ def af_diff(wgs_table, ext_table, outfile, outplot):
 	plt.ylabel("EXT dataset AF")
 	# plt.savefig('test.pdf')
 	plt.savefig(outplot)
+
+
+#function to generate a plot of N singletons vs coverage
+def plot_sing_vs_cov(sing_table, cov_table, outplot,out_table):
+	#try to fix X11 error
+	matplotlib.use('Agg')
+	# sing_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220110/03.samples/singletons/WGS_ITA_PREREL_MERGED_singletons.singletons"
+	# cov_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220110/03.samples/coverage/WGS_ITA_PREREL_MERGED_dp.idepth"
+	sing_df = pd.read_table(sing_table,sep="\t", header=0)
+	cov_df = pd.read_table(cov_table,sep="\t", header=0)
+
+	#calculate singleton number by sample. We count as singletons also doubleton sites
+	sing_number=sing_df.groupby(sing_df['INDV'], as_index=False).size()
+	# merge dataframes using the provided key
+	merged_df = sing_number.merge(cov_df, how='inner',on='INDV')
+	#rename columns
+	merged_df.columns = ['INDV','SINGLETONS','N_SITES','MEAN_DEPTH']
+	#save also the merged table
+	merged_df.to_csv(out_table,sep="\t", index=False, header=True, float_format="%.4f")
+	#plot the data, defining the point size based on the diff value
+	merged_df.plot.scatter(x='SINGLETONS',y='MEAN_DEPTH',s=merged_df['SINGLETONS'] * 0.1)
+	plt.xlabel("SINGLETONS")
+	plt.ylabel("MEAN DEPTH")
+	plt.title("Singletons vs Mean Depth")
+	# plt.savefig('test.pdf')
+	plt.savefig(outplot)

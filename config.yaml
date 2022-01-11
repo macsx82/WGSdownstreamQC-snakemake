@@ -60,6 +60,8 @@ rules:
     out_dir: "03.samples/MissingRate"
   kingPCA:
     out_dir: "03.samples/PCA"
+  SingCovPlot:
+    out_dir: "03.samples/plots"
   stats:
     out_dir: "05.stats"
 

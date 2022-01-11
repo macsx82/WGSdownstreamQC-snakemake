@@ -82,7 +82,7 @@ rule SampleGetHetRateOut:
 #or we can use Read Depth by Sample
 rule sampleDP:
 	output:
-		expand(os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{{vcf_name}}_dp.{ext}"), ext=["idepth"])
+		os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{vcf_name}_dp.idepth")
 	input:
 		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
@@ -147,3 +147,41 @@ rule SampleMissingRate:
 		"""
 		{params.vcftools} --gzvcf {input.vcf} --missing-indv --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
+
+#plot singletons vs coverage
+rule SingCovPlot:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("SingCovPlot").get("out_dir"), "{vcf_name}_SingCov.pdf"),
+		os.path.join(BASE_OUT,config.get("rules").get("SingCovPlot").get("out_dir"), "{vcf_name}_SingCov.txt")
+	input:
+		sample_coverage=rules.sampleDP.output[0],
+		sample_singletons=rules.singletons.output[0]
+	params:
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-SingCovPlot.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-SingCovPlot.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_SingCovPlot.tsv"
+	envmodules:
+		"vcftools/0.1.16"
+	run:
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.INFO)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			plot_sing_vs_cov(input.sample_singletons, input.sample_coverage, output[0],output[1])
+			# cp_bed_cmd="cp %s %s" %(input.bed_file,output[1])
+			# cp_fam_cmd="cp %s %s" %(input.fam_file,output[2])
+			# shell(cp_bed_cmd)
+			# shell(cp_fam_cmd)
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
