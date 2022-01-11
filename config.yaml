@@ -24,6 +24,7 @@ paths:
   benchmark: "" #base path for benchmark folder
   tmp: "" #base path for tmp folder
   1000G_ref_for_king: "" #files reference for king pca projection
+  scripts: "/u/burlo/cocca/scripts/pipelines/TEST_BRANCH/WGSdownstreamQC-snakemake/scripts"
 ##### Rules specific options #####
 rules:
   reapplyVQSRsnps:

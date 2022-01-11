@@ -53,7 +53,8 @@ rule kingPCA:
 		proj_pref=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaproj"),
 		plot_dir=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir")),
 		tgRefBed=config.get("paths").get("1000G_ref_for_king"),
-		king=config['KING']
+		king=config['KING'],
+		scripts=config.get('paths').get('scripts')
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}_kingPCA.log",
 		config["paths"]["log_dir"] + "/{vcf_name}_kingPCA.e"
@@ -68,5 +69,5 @@ rule kingPCA:
 		"""
 		{params.king} -b {input.ibed} --mds --prefix {params.pca_pref} 1> {log[0]} 2> {log[1]}
 		{params.king} -b {params.tgRefBed},{input.ibed} --projection --mds --prefix {params.proj_pref} 1>> {log[0]} 2>> {log[1]}
-		Rscript --no-save scripts/PCA.R {wildcards.vcf_name} {params.plot_dir} {params.pca_pref} {params.proj_pref} 1>> {log[0]} 2>> {log[1]}
+		Rscript --no-save {params.scripts}/PCA.R {wildcards.vcf_name} {params.plot_dir} {params.pca_pref} {params.proj_pref} 1>> {log[0]} 2>> {log[1]}
 		"""
