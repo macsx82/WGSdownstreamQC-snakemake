@@ -25,8 +25,8 @@ def PCAplots(plot_dir, pca_in, proj_in, proj_ref,vcf_name):
      # plot_dir = plot_dir
      pca_file = pca_in
      # pca_file = "/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220110/03.samples/PCA/WGS_ITA_PREREL_MERGED_cleaned.LD0.3_kingpcapc.txt"
-     outplot = os.path.join(plot_dir,data_name + "_pca.png")
-     outplot_pj = os.path.join(plot_dir,data_name + "_pca_projection_on_1000GP.png")
+     outplot = os.path.join(plot_dir,data_name + "_pca.pdf")
+     outplot_pj = os.path.join(plot_dir,data_name + "_pca_projection_on_1000GP.pdf")
      
      ## plot simple data PCA
      pca_df = pd.read_table(pca_file,sep=" ", header=0)
