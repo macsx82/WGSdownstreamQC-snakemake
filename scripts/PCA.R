@@ -1,6 +1,13 @@
 ## written Margherita Francescatto 2021/05/01
 ## adapted from king automatically created plots
-library(plyr)
+requiredPackages = c('plyr')
+for(p in requiredPackages){
+  chooseCRANmirror(ind = 51)
+  if(!require(p,character.only = TRUE)) install.packages(p)
+  library(p,character.only = TRUE)
+}
+
+# library(plyr)
 
 ## set script to accept command line arguments and get them
 args <- commandArgs(TRUE)
