@@ -60,6 +60,8 @@ rule kingPCA:
 	threads: 1
 	resources:
 		mem_mb=5000
+	envmodules:
+		"R/4.0.5"
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_kingPCA.tsv"
 	shell:
