@@ -18,6 +18,8 @@ import numpy as np
 
 #define a function to generate plots we need
 def PCAplots(plot_dir, pca_in, proj_in, proj_ref,vcf_name):
+     #try to fix X11 error
+     matplotlib.use('Agg')
      #get args
      data_name = vcf_name
      # plot_dir = plot_dir
