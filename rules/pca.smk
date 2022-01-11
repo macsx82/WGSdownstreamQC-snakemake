@@ -103,7 +103,7 @@ rule kingPCAplot:
 		try: 
 			logger.info('Starting operation!')
 			# do something
-			PCAplots(params.plot_dir,input.pc,input.proj_pc,input.proj_popref)
+			PCAplots(params.plot_dir,input.pc,input.proj_pc,input.proj_popref,wildcards.vcf_name)
 			# cp_bed_cmd="cp %s %s" %(input.bed_file,output[1])
 			# cp_fam_cmd="cp %s %s" %(input.fam_file,output[2])
 			# shell(cp_bed_cmd)

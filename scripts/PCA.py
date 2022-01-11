@@ -17,9 +17,9 @@ import matplotlib
 import numpy as np
 
 #define a function to generate plots we need
-def PCAplots(plot_dir, pca_in, proj_in, proj_ref,wildcards):
+def PCAplots(plot_dir, pca_in, proj_in, proj_ref,vcf_name):
      #get args
-     data_name = wildcards.vcf_name
+     data_name = vcf_name
      # plot_dir = plot_dir
      pca_file = pca_in
      # pca_file = "/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220110/03.samples/PCA/WGS_ITA_PREREL_MERGED_cleaned.LD0.3_kingpcapc.txt"

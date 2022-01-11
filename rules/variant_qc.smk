@@ -172,7 +172,7 @@ rule comparePopAF:
 		try: 
 			logger.info('Starting operation!')
 			# do something
-			af_diff(input.wgs_table, ext_table, outname_tab, outname_plot)
+			af_diff(input.wgs_table, params.ext_table, outname_tab, outname_plot)
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
