@@ -95,7 +95,7 @@ rule kingPCAplot:
 		config["paths"]["benchmark"] + "/{vcf_name}_kingPCAplot.tsv"
 	run:
 		logger = logging.getLogger('logging_test')
-		fh = logging.FileHandler(str(log[0]))
+		fh = logging.FileHandler(str(log[1]))
 		fh.setLevel(logging.INFO)
 		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 		fh.setFormatter(formatter)

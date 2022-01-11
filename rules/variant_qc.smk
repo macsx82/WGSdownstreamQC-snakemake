@@ -164,7 +164,7 @@ rule comparePopAF:
 		outname_tab=params.out_prefix + "/"+ wildcards.vcf_name + "_" + params.ext_table + "_af_extrDiff.txt"
 		outname_plot=params.out_prefix + "/"+ wildcards.vcf_name + "_" + params.ext_table + "_af.pdf"
 		logger = logging.getLogger('logging_test')
-		fh = logging.FileHandler(str(log[0]))
+		fh = logging.FileHandler(str(log[1]))
 		fh.setLevel(logging.INFO)
 		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 		fh.setFormatter(formatter)
