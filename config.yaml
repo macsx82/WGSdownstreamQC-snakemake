@@ -24,7 +24,8 @@ paths:
   benchmark: "" #base path for benchmark folder
   tmp: "" #base path for tmp folder
   1000G_ref_for_king: "" #files reference for king pca projection
-  scripts: "/u/burlo/cocca/scripts/pipelines/TEST_BRANCH/WGSdownstreamQC-snakemake/scripts"
+  snp_array_data: "" #path and prefix for the snp array data to be used for NRDR calculations 
+
 ##### Rules specific options #####
 rules:
   reapplyVQSRsnps:
@@ -62,6 +63,10 @@ rules:
     out_dir: "03.samples/PCA"
   SingCovPlot:
     out_dir: "03.samples/plots"
+  Plink2Vcf:
+    out_dir: "04.nrdr/array"
+  NRDR:
+    out_dir: "04.nrdr"
   stats:
     out_dir: "05.stats"
 

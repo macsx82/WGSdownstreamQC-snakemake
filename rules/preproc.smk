@@ -85,4 +85,3 @@ rule mergeReapplyVQSR:
 		({params.bcftools} concat -a {input.vcf_snps} {input.vcf_indels} | {params.bcftools} sort -T ${{temp}} | {params.bcftools} norm -f {params.ref_genome} -O z -o {output[0]}) > {log[0]} 2> {log[1]}
         {params.bcftools} index -t {output[0]}
 		"""
-		# {params.bcftools} concat {input.vcf_snps} {input.vcf_indels}| {params.bcftools} sort -T ${{temp}} -O z -o {output[0]} > {log[0]} 2> {log[1]}

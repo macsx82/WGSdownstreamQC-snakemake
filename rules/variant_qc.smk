@@ -4,13 +4,10 @@ rule cleanMissingHwe:
 	output:
 		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz"),
 		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz.tbi"),
-		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.removed.sites")
-		# os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.log")
 	input:
 		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}_VQSLODrefilter.vcf.gz"),
 		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}_VQSLODrefilter.vcf.gz.tbi")
 	params:
-		vcftools=config['VCFTOOLS'],
 		bcftools=config['BCFTOOLS'],
 		hwe_thr=config.get("rules").get("cleanMissingHwe").get("hwe_thr"),
 		missing_thr=config.get("rules").get("cleanMissingHwe").get("missing_thr"),
@@ -29,9 +26,36 @@ rule cleanMissingHwe:
 	shell:
 		"""
 		({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --recode --recode-INFO-all -c | {params.bcftools} view -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
-		({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --removed-sites --out {params.out_prefix}) 1>> {log[0]} 2>> {log[1]}
 		{params.bcftools} index -t {output[0]} 1>> {log[0]} 2>> {log[1]}
 		"""
+
+rule cleanMissingHweList:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.removed.sites")
+	input:
+		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}_VQSLODrefilter.vcf.gz"),
+		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}_VQSLODrefilter.vcf.gz.tbi")
+	params:
+		vcftools=config['VCFTOOLS'],
+		hwe_thr=config.get("rules").get("cleanMissingHwe").get("hwe_thr"),
+		missing_thr=config.get("rules").get("cleanMissingHwe").get("missing_thr"),
+		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call")
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHweList.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHweList.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_cleanMissingHweList.tsv"
+	envmodules:
+		"vcftools/0.1.16"
+	shell:
+		"""
+		({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --removed-sites --out {params.out_prefix}) 1> {log[0]} 2> {log[1]}
+		"""
+
+
 
 # 2) set of rules to calculate het rate and missing rate lists to be used as summary data and removal lists
 #het rate rule: first get the data with vcftools
