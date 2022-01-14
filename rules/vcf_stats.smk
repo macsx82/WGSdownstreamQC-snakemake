@@ -16,7 +16,7 @@ rule vcf_stats_initial:
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_stats_initial.tsv"
 	resources:
-		mem_mb=5000
+		mem_mb=10000
 	envmodules:
 		"bcftools/1.14"
 	message: """ VCF stats after VQSR reapply """
@@ -45,7 +45,7 @@ rule vcf_stats_afterHWE95Clean:
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_stats_HWE95call.tsv"
 	resources:
-		mem_mb=5000
+		mem_mb=10000
 	envmodules:
 		"bcftools/1.14"
 	message: """ VCF stats after first rough clean """
