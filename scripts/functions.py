@@ -139,7 +139,7 @@ def get_het_sample_outliers(het_table, out_file):
 
 
 #function to generate a merged file with AF to plot
-def af_diff(wgs_table, ext_table, outfile, outplot):
+def af_diff(wgs_table, ext_table, outfile, outplot,outplot_extreme):
 	#try to fix X11 error
 	matplotlib.use('Agg')
 	# define the column header
@@ -167,6 +167,11 @@ def af_diff(wgs_table, ext_table, outfile, outplot):
 	plt.ylabel("EXT dataset AF")
 	# plt.savefig('test.pdf')
 	plt.savefig(outplot)
+	#plot only data from the extreme diff dataset
+	extreme_diff_variants_df.plot.scatter(x='AF_wgs',y='AF_ext',s=merged_df['af_diff'] * 100)
+	plt.xlabel("WGS AF")
+	plt.ylabel("EXT dataset AF")
+	plt.savefig(outplot_extreme)
 
 
 #function to generate a plot of N singletons vs coverage
@@ -197,9 +202,11 @@ def plot_sing_vs_cov(sing_table, cov_table, outplot,out_table):
 	#add singleton_rate column (over total number sites per sample)
 	merged_df['sing_rate']= merged_df.SINGLETONS/merged_df.N_SITES
 	#save also the merged table
-	merged_df.to_csv(out_table,sep="\t", index=False, header=True, float_format="%.4f")
+	merged_df.to_csv(out_table,sep="\t", index=False, header=True, float_format="%.8f")
 	#plot the data, defining the point size based on the diff value
-	merged_df.plot.scatter(x='SINGLETONS',y='MEAN_DEPTH',s=merged_df['sing_rate'] * 2000)
+	merged_df.plot.scatter(x='SINGLETONS',y='MEAN_DEPTH',s=merged_df['sing_rate'] * 20000)
+	plt.avxline(x=sing_up, color='r', label=' Singletons upper threshold (3SD)')
+	plt.avxline(x=sing_down, color='b', label=' Singletons lower threshold (3SD)')
 	plt.xlabel("SINGLETONS")
 	plt.ylabel("MEAN DEPTH")
 	plt.title("Singletons vs Mean Depth")

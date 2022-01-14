@@ -17,7 +17,7 @@ rule getSamples:
 		"bcftools/1.14"
 	resources:
 		mem_mb=5000
-	message: """ Filter SNPs """
+	message: """ Get samples list """
 	shell:
 		"""
 		{params.bcftools} query -l {input} > {output[0]}

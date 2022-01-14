@@ -165,7 +165,8 @@ rule getPopAF:
 rule comparePopAF:
 	output:
 		os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.txt"),
-		os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af.pdf")
+		os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af.pdf"),
+		os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.pdf")
 		# expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
 		# expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys()))
 	input:
@@ -196,7 +197,7 @@ rule comparePopAF:
 		try: 
 			logger.info('Starting operation!')
 			# do something
-			af_diff(input.wgs_table, params.ext_table, outname_tab, outname_plot)
+			af_diff(input.wgs_table, params.ext_table, outname_tab, outname_plot,output[2])
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
