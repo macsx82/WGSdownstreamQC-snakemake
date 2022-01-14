@@ -210,6 +210,8 @@ def plot_het_rate_sample(het_rate_table, outplot):
 	# 4) upper and lower threshold for samples flag
 	thr_up = het_rate_mean + 3 * het_rate_sd
 	thr_down = het_rate_mean - 3 * het_rate_sd
+	#get all values tagged for removal and add labels to the points
+	het_rate_rem=list(het_rate_sd[het_rate_sd['het_rem']==1]['INDV'])
 	#plot the data, defining the point size based on the diff value
 	het_rate_df.plot.scatter(x='INDV',y='het_rate',s=het_rate_df['het_rate'] * 200)
 	plt.avxline(x=thr_up, color='r', label='Het Rate upper threshold (3SD)')
@@ -217,5 +219,9 @@ def plot_het_rate_sample(het_rate_table, outplot):
 	plt.xlabel("Samples")
 	plt.ylabel("Het rate")
 	plt.title("Het Rate per sample")
+	for s_label in het_rate_rem:
+		s_name=het_rate_sd[het_rate_sd['INDV']==s_label]['INDV']
+		s_rate=het_rate_sd[het_rate_sd['INDV']==s_label]['het_rate']
+		plt.annotate(s_label,(s_name, s_rate))
 	# plt.savefig('test.pdf')
 	plt.savefig(outplot)
