@@ -151,17 +151,6 @@ rule sampleDP:
 		{params.vcftools} --gzvcf {input.vcf} --depth --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
 
-# rule coverage:
-# 	output:
-# 	input:
-# 	params:
-# 	log:
-# 	threads:
-# 	resources:
-# 	benchmark:
-# 	shell:
-
-
 #Missing rate rule
 rule SampleMissingRate:
 	output:
@@ -219,6 +208,38 @@ rule SingCovPlot:
 			logger.info('Starting operation!')
 			# do something
 			plot_sing_vs_cov(input.sample_singletons, input.sample_coverage, output[0],output[1])
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
+
+#plot het rate per sample by average coverage
+rule PlotHetRateSampleCov:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("PlotHetRateSampleCov").get("out_dir"), "{vcf_name}_hetRateByCov.pdf")
+	input:
+		rules.SampleGetHetRateOut.output[0],
+		rules.sampleDP.output[0]
+	params:
+		sex_table=config.get('sex_table')
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleCov.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleCov.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_PlotHetRateSampleCov.tsv"
+	run:
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.DEBUG)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			plot_het_rate_vs_coverage(input[0], input[1],params.sex_table, output[0])
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)

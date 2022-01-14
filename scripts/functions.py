@@ -216,16 +216,55 @@ def plot_het_rate_sample(het_rate_table, outplot):
 	het_rate_rem=list(het_rate_df[het_rate_df['het_rem']==1]['INDV'])
 	#plot the data, defining the point size based on the diff value
 	het_rate_df.plot.scatter(x='INDV',y='het_rate',s=het_rate_df['het_rate'] * 200)
-	plt.avxline(x=thr_up, color='red', label='Het Rate upper threshold (3SD)')
-	plt.avxline(x=thr_up5, color='green', label='Het Rate upper threshold (5SD)')
-	plt.avxline(x=thr_down, color='blue', label='Het Rate lower threshold (3SD)')
-	plt.avxline(x=thr_down, color='black', label='Het Rate lower threshold (5SD)')
+	plt.axhline(y=thr_up, color='red', label='Het Rate upper threshold (3SD)')
+	plt.axhline(y=thr_up5, color='green', label='Het Rate upper threshold (5SD)')
+	plt.axhline(y=thr_down, color='blue', label='Het Rate lower threshold (3SD)')
+	plt.axhline(y=thr_down, color='black', label='Het Rate lower threshold (5SD)')
+	frame1=plt.gca()
+	frame1.axes.get_xaxis().set_ticks([])
 	plt.xlabel("Samples")
 	plt.ylabel("Het rate")
 	plt.title("Het Rate per sample")
 	for s_label in het_rate_rem:
-		s_name=het_rate_sd[het_rate_sd['INDV']==s_label]['INDV']
-		s_rate=het_rate_sd[het_rate_sd['INDV']==s_label]['het_rate']
+		s_name=het_rate_df[het_rate_df['INDV']==s_label]['INDV']
+		s_rate=het_rate_df[het_rate_df['INDV']==s_label]['het_rate']
 		plt.annotate(s_label,(s_name, s_rate))
-	# plt.savefig('test.pdf')
+	# plt.savefig('testHETRATE.pdf')
+	plt.savefig(outplot)
+
+
+def plot_het_rate_vs_coverage(het_rate_table,cov_table,sex_table,outplot):
+	#try to fix X11 error
+	matplotlib.use('Agg')
+	# het_rate_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/HetRate/WGS_ITA_PREREL_MERGED_hetRate.txt"
+	het_rate_df = pd.read_table(het_rate_table,sep="\t", header=0)
+	# cov_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220110/03.samples/coverage/WGS_ITA_PREREL_MERGED_dp.idepth"
+	cov_df = pd.read_table(cov_table,sep="\t", header=0)
+	#sex_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/WGS_all_samples_sex.txt"
+	sex_df=pd.read_table(sex_table,sep=" ", header=0)
+	# merge dataframes using the provided key
+	merged_df = het_rate_df.merge(cov_df, how='inner',on='INDV')
+	#get all values tagged for removal and add labels to the points
+	het_rate_rem=list(het_rate_df[het_rate_df['het_rem']==1]['INDV'])
+	#define color map for sexes
+	colors_map = ['Female': 'green' , 'Male' : 'orange']
+	#add sex to the dataframe and convert to string value
+	merged_sex_df = merged_df.merge(sex_df, how='inner', left_on='INDV', right_on='SAMPLE_ID')
+	merged_sex_df['sex'].replace({1:'Male',2:'Female'}, inplace=True)
+	#group by population on the merged dataset
+	merged_df_grouped= merged_sex_df.groupby('sex')
+	#initialize the plot
+	fig, ax = plt.subplots()
+	#plot the data, defining the point size based on the het value
+	for key, group in merged_df_grouped:
+		group.plot(ax=ax,kind='scatter',x='het_rate',y='MEAN_DEPTH', color=colors_map[str(key)], label=key)
+	# merged_df.plot.scatter(y='MEAN_DEPTH',x='het_rate',s=het_rate_df['het_rate'] * 200)
+	plt.xlabel("Het rate")
+	plt.ylabel("Mean depth")
+	plt.title("Het Rate by mean depth per sample")
+	for s_label in het_rate_rem:
+		s_rate=merged_sex_df[merged_sex_df['INDV']==s_label]['het_rate']
+		s_depth=merged_sex_df[merged_sex_df['INDV']==s_label]['MEAN_DEPTH']
+		plt.annotate(s_label,(s_rate,s_depth))
+	# plt.savefig('testHETbyDP.pdf')
 	plt.savefig(outplot)
