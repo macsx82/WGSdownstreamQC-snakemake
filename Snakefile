@@ -72,12 +72,11 @@ rule all:
         # expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_het.{ext}"), ext=["het", "log"],vcf_name=out_prefix),
         expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate.txt"),vcf_name=out_prefix),
         #plots
-        expand(os.path.join(BASE_OUT,config.get("rules").get("SingCovPlot").get("out_dir"), "{vcf_name}_SingCov.{ext}"),vcf_name=out_prefix,ext=["pdf","txt"])
-
+        expand(os.path.join(BASE_OUT,config.get("rules").get("SingCovPlot").get("out_dir"), "{vcf_name}_SingCov.{ext}"),vcf_name=out_prefix,ext=["pdf","txt"]),
         #stats
         expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_initial.stats"), vcf_name=out_prefix),
-        expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_HWE95call.stats"), vcf_name=out_prefix),
-        
+        expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_HWE95call.stats"), vcf_name=out_prefix)
+
 #### Modules ####
 include:
     include_prefix + "/preproc.smk"
