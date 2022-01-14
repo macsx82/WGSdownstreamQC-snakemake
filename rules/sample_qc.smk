@@ -76,7 +76,19 @@ rule SampleGetHetRateOut:
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_hetRate.tsv"
 	run:
-		get_het_sample_outliers(input[0], output[0])
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.DEBUG)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			get_het_sample_outliers(input[0], output[0])
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
 
 #plot het rate per sample
 rule PlotHetRateSample:
@@ -95,7 +107,19 @@ rule PlotHetRateSample:
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_PlotHetRateSample.tsv"
 	run:
-		plot_het_rate_sample(input[0], output[0])
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.DEBUG)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			plot_het_rate_sample(input[0], output[0])
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
 
 #we may need data from varcall pipeline
 #or we can use Read Depth by Sample

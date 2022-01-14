@@ -144,17 +144,17 @@ def af_diff(wgs_table, ext_table, outfile, outplot,outplot_extreme):
 	#rename columns
 	extreme_diff_variants_df.columns = ['var_key', 'CHROM', 'POS', 'ID', 'REF', 'ALT', 'AC_wgs', 'AN_wgs', 'AF_wgs', 'MAF_wgs', 'AC_ext', 'AN_ext', 'AF_ext', 'MAF_ext', 'af_diff']
 	extreme_diff_variants_df.to_csv(outfile,sep="\t", index=False, header=True, float_format="%.4f")
+	#plot only data from the extreme diff dataset
+	extreme_diff_variants_df.plot.scatter(x='AF_wgs',y='AF_ext',s=extreme_diff_variants_df['af_diff'] * 100)
+	plt.xlabel("WGS AF")
+	plt.ylabel("EXT dataset AF")
+	plt.savefig(outplot_extreme)
 	#plot also the data, defining the point size based on the diff value
 	merged_df.plot.scatter(x='AF_x',y='AF_y',s=merged_df['af_diff'] * 100)
 	plt.xlabel("WGS AF")
 	plt.ylabel("EXT dataset AF")
 	# plt.savefig('test.pdf')
 	plt.savefig(outplot)
-	#plot only data from the extreme diff dataset
-	extreme_diff_variants_df.plot.scatter(x='AF_wgs',y='AF_ext',s=merged_df['af_diff'] * 100)
-	plt.xlabel("WGS AF")
-	plt.ylabel("EXT dataset AF")
-	plt.savefig(outplot_extreme)
 
 
 #function to generate a plot of N singletons vs coverage
