@@ -95,7 +95,7 @@ rule PlotHetRateSample:
 	output:
 		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate.pdf")
 	input:
-		rules.SampleHetRate.output[0]
+		rules.SampleGetHetRateOut.output[0]
 	params:
 		vcftools=config['VCFTOOLS']
 	log:
