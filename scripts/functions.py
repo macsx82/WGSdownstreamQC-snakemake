@@ -247,7 +247,7 @@ def plot_het_rate_vs_coverage(het_rate_table,cov_table,sex_table,outplot):
 	#get all values tagged for removal and add labels to the points
 	het_rate_rem=list(het_rate_df[het_rate_df['het_rem']==1]['INDV'])
 	#define color map for sexes
-	colors_map = ['Female': 'green' , 'Male' : 'orange']
+	colors_map ={'Female': 'green' , 'Male' : 'orange'}
 	#add sex to the dataframe and convert to string value
 	merged_sex_df = merged_df.merge(sex_df, how='inner', left_on='INDV', right_on='SAMPLE_ID')
 	merged_sex_df['sex'].replace({1:'Male',2:'Female'}, inplace=True)
