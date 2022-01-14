@@ -98,23 +98,6 @@ def get_het_sample_outliers(het_table, out_file):
 	het_df['het_rem']=het_df['het_rate'].apply(lambda x: flag_record_remove(x, [het_up, het_down], 'both'))
 	het_df.to_csv(out_file,sep="\t", index=False, header=True, float_format="%.4f")
 
-#function to flag samples with too many singletons based on the singleton distribution
-# def get_singleton_sample_outliers(singleton_table, out_file):
-# 	#we need to read the het table and calculate:
-# 	het_df = pd.read_table(het_table, sep="\t", header=0)
-# 	# 1) het rate
-# 	het_df['het_rate'] = (het_df['N_SITES'] - het_df['O(HOM)']) / het_df['N_SITES']
-# 	# 2) mean
-# 	het_mean = het_df['het_rate'].mean()
-# 	# 3) sd
-# 	het_sd = het_df['het_rate'].std()
-# 	# 4) upper and lower threshold for samples flag
-# 	het_up = het_mean + 5 * het_sd
-# 	het_down = het_mean - 5 * het_sd
-# 	#now flag samples for exclusion if their het rate is outside the defined boundaries
-# 	het_df['het_rem']=het_df['het_rate'].apply(lambda x: flag_record_remove(x, het_up, het_down))
-# 	het_df.to_csv(out_file,sep="\t", index=False, header=True, float_format="%.4f")
-
 
 #function to flag variants with heterozigosity rate higher or lower than 5 SD from the mean
 # def get_het_hwe_variants_outliers(het_table, hwe_thr, out_file):
@@ -210,5 +193,29 @@ def plot_sing_vs_cov(sing_table, cov_table, outplot,out_table):
 	plt.xlabel("SINGLETONS")
 	plt.ylabel("MEAN DEPTH")
 	plt.title("Singletons vs Mean Depth")
+	# plt.savefig('test.pdf')
+	plt.savefig(outplot)
+
+#function to generate a plot of N singletons vs coverage
+def plot_het_rate_sample(het_rate_table, outplot):
+	#try to fix X11 error
+	matplotlib.use('Agg')
+	# sing_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220110/03.samples/singletons/WGS_ITA_PREREL_MERGED_singletons.singletons"
+	# cov_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220110/03.samples/coverage/WGS_ITA_PREREL_MERGED_dp.idepth"
+	het_rate_df = pd.read_table(het_rate_table,sep="\t", header=0)
+	#get some values to plot
+	het_rate_mean = het_rate_df['het_rate'].mean()
+	#sd
+	het_rate_sd = het_rate_df['het_rate'].std()
+	# 4) upper and lower threshold for samples flag
+	thr_up = het_rate_mean + 3 * het_rate_sd
+	thr_down = het_rate_mean - 3 * het_rate_sd
+	#plot the data, defining the point size based on the diff value
+	het_rate_df.plot.scatter(x='INDV',y='het_rate',s=het_rate_df['het_rate'] * 200)
+	plt.avxline(x=thr_up, color='r', label='Het Rate upper threshold (3SD)')
+	plt.avxline(x=thr_down, color='b', label='Het Rate lower threshold (3SD)')
+	plt.xlabel("Samples")
+	plt.ylabel("Het rate")
+	plt.title("Het Rate per sample")
 	# plt.savefig('test.pdf')
 	plt.savefig(outplot)

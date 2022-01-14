@@ -78,6 +78,25 @@ rule SampleGetHetRateOut:
 	run:
 		get_het_sample_outliers(input[0], output[0])
 
+#plot het rate per sample
+rule PlotHetRateSample:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate.pdf")
+	input:
+		rules.SampleHetRate.output[0]
+	params:
+		vcftools=config['VCFTOOLS']
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSample.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSample.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_PlotHetRateSample.tsv"
+	run:
+		plot_het_rate_sample(input[0], output[0])
+
 #we may need data from varcall pipeline
 #or we can use Read Depth by Sample
 rule sampleDP:
