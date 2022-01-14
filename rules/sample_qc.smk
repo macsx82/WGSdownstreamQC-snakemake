@@ -220,7 +220,7 @@ rule PlotHetRateSampleCov:
 		rules.SampleGetHetRateOut.output[0],
 		rules.sampleDP.output[0]
 	params:
-		sex_table=config.get('sex_table')
+		sex_table=config.get('paths').get('sex_table')
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleCov.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleCov.e"
