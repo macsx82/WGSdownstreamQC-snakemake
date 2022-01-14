@@ -12,6 +12,7 @@ import psutil
 import re
 import sys
 import matplotlib.pyplot as plt
+import matplotlib
 
 
 #define some standard functions to retrieve files more easily
@@ -200,8 +201,7 @@ def plot_sing_vs_cov(sing_table, cov_table, outplot,out_table):
 def plot_het_rate_sample(het_rate_table, outplot):
 	#try to fix X11 error
 	matplotlib.use('Agg')
-	# sing_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220110/03.samples/singletons/WGS_ITA_PREREL_MERGED_singletons.singletons"
-	# cov_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220110/03.samples/coverage/WGS_ITA_PREREL_MERGED_dp.idepth"
+	# het_rate_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/HetRate/WGS_ITA_PREREL_MERGED_hetRate.txt"
 	het_rate_df = pd.read_table(het_rate_table,sep="\t", header=0)
 	#get some values to plot
 	het_rate_mean = het_rate_df['het_rate'].mean()
@@ -210,12 +210,16 @@ def plot_het_rate_sample(het_rate_table, outplot):
 	# 4) upper and lower threshold for samples flag
 	thr_up = het_rate_mean + 3 * het_rate_sd
 	thr_down = het_rate_mean - 3 * het_rate_sd
+	thr_up5 = het_rate_mean + 5 * het_rate_sd
+	thr_down5 = het_rate_mean - 5 * het_rate_sd
 	#get all values tagged for removal and add labels to the points
-	het_rate_rem=list(het_rate_sd[het_rate_sd['het_rem']==1]['INDV'])
+	het_rate_rem=list(het_rate_df[het_rate_df['het_rem']==1]['INDV'])
 	#plot the data, defining the point size based on the diff value
 	het_rate_df.plot.scatter(x='INDV',y='het_rate',s=het_rate_df['het_rate'] * 200)
-	plt.avxline(x=thr_up, color='r', label='Het Rate upper threshold (3SD)')
-	plt.avxline(x=thr_down, color='b', label='Het Rate lower threshold (3SD)')
+	plt.avxline(x=thr_up, color='red', label='Het Rate upper threshold (3SD)')
+	plt.avxline(x=thr_up5, color='green', label='Het Rate upper threshold (5SD)')
+	plt.avxline(x=thr_down, color='blue', label='Het Rate lower threshold (3SD)')
+	plt.avxline(x=thr_down, color='black', label='Het Rate lower threshold (5SD)')
 	plt.xlabel("Samples")
 	plt.ylabel("Het rate")
 	plt.title("Het Rate per sample")
