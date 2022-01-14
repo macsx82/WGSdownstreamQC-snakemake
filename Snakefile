@@ -73,6 +73,7 @@ rule all:
         expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af.pdf"),vcf_name=out_prefix, ref_pop=ref_pop),
         expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.pdf"),vcf_name=out_prefix, ref_pop=ref_pop),
         expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate.pdf"),vcf_name=out_prefix),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("PlotHetRateSampleCov").get("out_dir"), "{vcf_name}_hetRateByCov.pdf"),vcf_name=out_prefix),
         #stats
         expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_initial.stats"), vcf_name=out_prefix),
         expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_HWE95call.stats"), vcf_name=out_prefix)
