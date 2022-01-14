@@ -1,6 +1,28 @@
 #module containing preprocessing rules for the last downstream QC on WGS data
-# wildcard_constraints:
-#     vcf_name="\w+_MERGED$"
+
+#Rule to generate a sample list to be used in other rules
+rule getSamples:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("getSamples").get("out_dir"), PROJECT_NAME + "_SamplesList.txt")
+	input:
+		MAIN_VCF_INPUT
+	params:
+		bcftools=config.get("BCFTOOLS")
+	log:
+		config["paths"]["log_dir"] + "/getSamples.log",
+		config["paths"]["log_dir"] + "/getSamples.e"
+	benchmark:
+		config["paths"]["benchmark"] + "/getSamples.tsv"
+	envmodules:
+		"bcftools/1.14"
+	resources:
+		mem_mb=5000
+	message: """ Filter SNPs """
+	shell:
+		"""
+		{params.bcftools} query -l {input} > {output[0]}
+		"""
+
     
 #Rule to apply a more stringen VQSLOD filter, if needed, to snps
 rule reapplyVQSRsnps:
