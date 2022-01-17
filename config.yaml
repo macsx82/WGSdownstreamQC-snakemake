@@ -66,9 +66,7 @@ rules:
     out_dir: "03.samples/MissingRate"
   kingPCA:
     out_dir: "03.samples/PCA"
-  SingCovPlot:
-    out_dir: "03.samples/plots"
-  PlotHetRateSampleCov:
+  SamplePlots:
     out_dir: "03.samples/plots"
   Plink2Vcf:
     out_dir: "04.nrdr/array"

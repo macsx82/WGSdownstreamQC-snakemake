@@ -34,8 +34,8 @@ rule PlotHetRateSample:
 #plot singletons vs coverage
 rule SingCovPlot:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("SingCovPlot").get("out_dir"), "{vcf_name}_SingCov.pdf"),
-		os.path.join(BASE_OUT,config.get("rules").get("SingCovPlot").get("out_dir"), "{vcf_name}_SingCov.txt")
+		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_SingCov.pdf"),
+		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_SingCov.txt")
 	input:
 		sample_coverage=rules.sampleDP.output[0],
 		sample_singletons=rules.singletons.output[0]
@@ -67,14 +67,14 @@ rule SingCovPlot:
 #plot het rate per sample by average coverage
 rule PlotHetRateSampleCov:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("PlotHetRateSampleCov").get("out_dir"), "{vcf_name}_hetRateByCov_sex.pdf"),
-		os.path.join(BASE_OUT,config.get("rules").get("PlotHetRateSampleCov").get("out_dir"), "{vcf_name}_hetRateByCov_cohort.pdf")
+		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByCov_sex.pdf"),
+		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByCov_cohort.pdf")
 	input:
 		rules.SampleGetHetRateOut.output[0],
 		rules.sampleDP.output[0]
 	params:
 		manifest_table=config.get('paths').get('manifest_table'),
-		plot_prefix=os.path.join(BASE_OUT,config.get("rules").get("PlotHetRateSampleCov").get("out_dir"), "{vcf_name}_hetRateByCov")
+		plot_prefix=os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByCov")
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleCov.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleCov.e"
@@ -94,6 +94,74 @@ rule PlotHetRateSampleCov:
 			logger.info('Starting operation!')
 			# do something
 			plot_het_rate_vs_coverage(input[0], input[1],params.manifest_table, params.plot_prefix)
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
+
+#plot het rate per sample by Missing sites fraction
+rule PlotHetRateSampleMissing:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByMiss_sex.pdf"),
+		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByMiss_cohort.pdf")
+	input:
+		rules.SampleGetHetRateOut.output[0],
+		rules.sampleDP.output[0]
+	params:
+		manifest_table=config.get('paths').get('manifest_table'),
+		plot_prefix=os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByMiss")
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleMiss.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleMiss.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_PlotHetRateSampleMiss.tsv"
+	run:
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.DEBUG)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			plot_het_rate_vs_missing(input[0], input[1],params.manifest_table, params.plot_prefix)
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
+
+#plot het rate per sample by singleton count
+rule PlotHetRateSampleSing:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateBySing_sex.pdf"),
+		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateBySing_cohort.pdf")
+	input:
+		rules.SampleGetHetRateOut.output[0],
+		rules.sampleDP.output[0]
+	params:
+		manifest_table=config.get('paths').get('manifest_table'),
+		plot_prefix=os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateBySing")
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleSing.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleSing.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_PlotHetRateSampleSing.tsv"
+	run:
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.DEBUG)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			plot_het_rate_vs_singletons(input[0], input[1],params.manifest_table, params.plot_prefix)
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)

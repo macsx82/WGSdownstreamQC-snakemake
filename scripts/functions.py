@@ -298,3 +298,129 @@ def plot_het_rate_vs_coverage(het_rate_table,cov_table,manifest_table,outplot_pr
 	ax.legend(loc='upper right', ncol=3, fontsize='small')
 	# plt.savefig('testHETbyDPcohort.pdf')
 	plt.savefig(outplot_prefix+"_cohort.pdf")
+
+
+def plot_het_rate_vs_missing(het_rate_table,missing_table,manifest_table,outplot_prefix):
+	#try to fix X11 error
+	matplotlib.use('Agg')
+	# het_rate_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/HetRate/WGS_ITA_PREREL_MERGED_hetRate.txt"
+	het_rate_df = pd.read_table(het_rate_table,sep="\t", header=0)
+	# missing_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/MissingRate/WGS_ITA_PREREL_MERGED_missing.imiss"
+	missing_df = pd.read_table(missing_table,sep="\t", header=0)
+	# manifest_table="/large/___HOME___/burlo/cocca/analyses/WGS_QC_pre_release/WGS_817_samples_manifest.txt"
+	sex_df=pd.read_table(manifest_table,sep=" ", header=0)
+	# merge dataframes using the provided key
+	merged_df = het_rate_df.merge(missing_df, how='inner',on='INDV')
+	#get all values tagged for removal and add labels to the points
+	het_rate_rem=list(het_rate_df[het_rate_df['het_rem']==1]['INDV'])
+	#define color map for sexes
+	colors_map ={'Female': 'green' , 'Male' : 'orange'}
+	#add sex to the dataframe and convert to string value
+	merged_sex_df = merged_df.merge(sex_df, how='inner', left_on='INDV', right_on='SAMPLE_ID')
+	merged_sex_df['sex'].replace({1:'Male',2:'Female'}, inplace=True)
+	#group by population on the merged dataset
+	merged_df_grouped= merged_sex_df.groupby('sex')
+	#initialize the plot
+	fig, ax = plt.subplots()
+	#plot the data, defining the point size based on the het value
+	for key, group in merged_df_grouped:
+		group.plot(ax=ax,kind='scatter',x='het_rate',y='F_MISS', color=colors_map[str(key)], label=key)
+	# merged_df.plot.scatter(y='MEAN_DEPTH',x='het_rate',s=het_rate_df['het_rate'] * 200)
+	plt.xlabel("Het rate")
+	plt.ylabel("Missing sites fraction")
+	plt.title("Het Rate by Missing fraction per sample")
+	for s_label in het_rate_rem:
+		s_rate=merged_sex_df[merged_sex_df['INDV']==s_label]['het_rate']
+		s_miss=merged_sex_df[merged_sex_df['INDV']==s_label]['F_MISS']
+		plt.annotate(s_label,(s_rate,s_miss))
+	# plt.savefig('testHETbyMISS.pdf')
+	plt.savefig(outplot_prefix+"_sex.pdf")
+	#need to plot also by cohort
+	merged_df_grouped_cohort= merged_sex_df.groupby('COHORT')
+	# get cohorts
+	cohorts_list=list(merged_df_grouped_cohort.groups.keys())
+	#Map cohorts to colors
+	vals = np.linspace(0,1,len(cohorts_list))
+	np.random.shuffle(vals)
+	#use the tab20 colormap
+	colors_cohort_map= dict(zip(cohorts_list,plt.cm.tab20(vals)))
+	# cmap = plt.cm.colors.ListedColormap(plt.cm.tab20(vals))
+	# colors_map = dict(zip(pops,colors))
+	#initialize the plot
+	fig, ax = plt.subplots()
+	#plot the data, defining the point size based on the het value
+	for key, group in merged_df_grouped_cohort:
+		group.plot(ax=ax,kind='scatter',x='het_rate',y='F_MISS', color=colors_cohort_map[str(key)], label=key)
+	# merged_df.plot.scatter(y='MEAN_DEPTH',x='het_rate',s=het_rate_df['het_rate'] * 200)
+	plt.xlabel("Het rate")
+	plt.ylabel("Missing sites fraction")
+	plt.title("Het Rate by Missing fraction per sample")
+	for s_label in het_rate_rem:
+		s_rate=merged_sex_df[merged_sex_df['INDV']==s_label]['het_rate']
+		s_depth=merged_sex_df[merged_sex_df['INDV']==s_label]['F_MISS']
+		plt.annotate(s_label,(s_rate,s_depth))
+	ax.legend(loc='upper right', ncol=3, fontsize='small')
+	# plt.savefig('testHETbyMISScohort.pdf')
+	plt.savefig(outplot_prefix+"_cohort.pdf")
+
+# plot het vs singletons
+def plot_het_rate_vs_singletons(het_rate_table,sing_table,manifest_table,outplot_prefix):
+	#try to fix X11 error
+	matplotlib.use('Agg')
+	# het_rate_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/HetRate/WGS_ITA_PREREL_MERGED_hetRate.txt"
+	het_rate_df = pd.read_table(het_rate_table,sep="\t", header=0)
+	# sing_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/singletons/WGS_ITA_PREREL_MERGED_singletons.singletons"
+	sing_df = pd.read_table(sing_table,sep="\t", header=0)
+	
+	#calculate singleton number by sample. We count as singletons also doubleton sites
+	sing_number=sing_df.groupby(sing_df['INDV'], as_index=False).size()
+	#rename columns
+	sing_number.columns = ['INDV','SINGLETONS']
+	# merge dataframes using the provided key
+	merged_df = sing_number.merge(het_rate_df, how='inner',on='INDV')
+	# manifest_table="/large/___HOME___/burlo/cocca/analyses/WGS_QC_pre_release/WGS_817_samples_manifest.txt"
+	sex_df=pd.read_table(manifest_table,sep=" ", header=0)
+
+	#get all values tagged for removal and add labels to the points
+	het_rate_rem=list(het_rate_df[het_rate_df['het_rem']==1]['INDV'])
+	#define color map for sexes
+	colors_map ={'Female': 'green' , 'Male' : 'orange'}
+	#add sex to the dataframe and convert to string value
+	merged_sex_df = merged_df.merge(sex_df, how='inner', left_on='INDV', right_on='SAMPLE_ID')
+	merged_sex_df['sex'].replace({1:'Male',2:'Female'}, inplace=True)
+	#group by population on the merged dataset
+	merged_df_grouped= merged_sex_df.groupby('sex')
+	#initialize the plot
+	fig, ax = plt.subplots()
+	#plot the data, defining the point size based on the het value
+	for key, group in merged_df_grouped:
+		group.plot(ax=ax,kind='scatter',x='het_rate',y='SINGLETONS', color=colors_map[str(key)], label=key)
+	# merged_df.plot.scatter(y='MEAN_DEPTH',x='het_rate',s=het_rate_df['het_rate'] * 200)
+	plt.xlabel("Het rate")
+	plt.ylabel("Singleton count")
+	plt.title("Het Rate by Singleton count per sample")
+	# plt.savefig('testHETbySING.pdf')
+	plt.savefig(outplot_prefix+"_sex.pdf")
+	#need to plot also by cohort
+	merged_df_grouped_cohort= merged_sex_df.groupby('COHORT')
+	# get cohorts
+	cohorts_list=list(merged_df_grouped_cohort.groups.keys())
+	#Map cohorts to colors
+	vals = np.linspace(0,1,len(cohorts_list))
+	np.random.shuffle(vals)
+	#use the tab20 colormap
+	colors_cohort_map= dict(zip(cohorts_list,plt.cm.tab20(vals)))
+	# cmap = plt.cm.colors.ListedColormap(plt.cm.tab20(vals))
+	# colors_map = dict(zip(pops,colors))
+	#initialize the plot
+	fig, ax = plt.subplots()
+	#plot the data, defining the point size based on the het value
+	for key, group in merged_df_grouped_cohort:
+		group.plot(ax=ax,kind='scatter',x='het_rate',y='SINGLETONS', color=colors_cohort_map[str(key)], label=key)
+	# merged_df.plot.scatter(y='MEAN_DEPTH',x='het_rate',s=het_rate_df['het_rate'] * 200)
+	plt.xlabel("Het rate")
+	plt.ylabel("Singleton count")
+	plt.title("Het Rate by Singleton count per sample")
+	ax.legend(loc='upper right', ncol=3, fontsize='small')
+	# plt.savefig('testHETbySINGcohort.pdf')
+	plt.savefig(outplot_prefix+"_cohort.pdf")
