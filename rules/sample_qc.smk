@@ -166,7 +166,7 @@ rule SampleROH:
 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-SampleROH.e"
 	threads: 1
 	resources:
-		mem_mb=5000
+		mem_mb=15000
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_SampleROH.tsv"
 	envmodules:

@@ -209,6 +209,7 @@ def plot_het_rate_sample(het_rate_table, outplot):
 	#sd
 	het_rate_sd = het_rate_df['het_rate'].std()
 	# 4) upper and lower threshold for samples flag
+	thr_up1 = het_rate_mean + het_rate_sd
 	thr_up = het_rate_mean + 3 * het_rate_sd
 	thr_down = het_rate_mean - 3 * het_rate_sd
 	thr_up5 = het_rate_mean + 5 * het_rate_sd
@@ -217,6 +218,7 @@ def plot_het_rate_sample(het_rate_table, outplot):
 	het_rate_rem=list(het_rate_df[het_rate_df['het_rem']==1]['INDV'])
 	#plot the data, defining the point size based on the diff value
 	het_rate_df.plot.scatter(x='INDV',y='het_rate',s=het_rate_df['het_rate'] * 200)
+	plt.axhline(y=thr_up1, color='yellow', label='Het Rate upper threshold (1SD)')
 	plt.axhline(y=thr_up, color='red', label='Het Rate upper threshold (3SD)')
 	plt.axhline(y=thr_up5, color='green', label='Het Rate upper threshold (5SD)')
 	plt.axhline(y=thr_down, color='blue', label='Het Rate lower threshold (3SD)')
