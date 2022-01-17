@@ -97,29 +97,23 @@ def get_het_sample_outliers(het_table, out_file):
 	het_down = het_mean - 5 * het_sd
 	#now flag samples for exclusion if their het rate is outside the defined boundaries
 	het_df['het_rem']=het_df['het_rate'].apply(lambda x: flag_record_remove(x, [het_up, het_down], 'both'))
-	het_df.to_csv(out_file,sep="\t", index=False, header=True, float_format="%.4f")
+	het_df.to_csv(out_file,sep="\t", index=False, header=True, float_format="%.6f")
 
 
 #function to flag variants with heterozigosity rate higher or lower than 5 SD from the mean
-# def get_het_hwe_variants_outliers(het_table, hwe_thr, out_file):
-# 	#we need to read the het table and calculate:
-# 	# het_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/03.het/ALL_JOINT_744_callset_sorted_variants_het.hwe"
-# 	het_df = pd.read_table(het_table, sep="\t", header=0)
-# 	# 1) Flag sites for removal for HWE pval threshold
-# 	# hwe_thr=0.00000001
-# 	het_df['hwe_rem']=het_df['P_HWE'].apply(lambda x: flag_record_remove(x, [hwe_thr] , 'lt'))
-# 	# 1) het rate
-# 	het_df['hwe_rate']=het_df['OBS(HOM1/HET/HOM2)'].apply(lambda x: get_hetrate_variants(x))
-# 	# 2) mean
-# 	het_mean = het_df['het_rate'].mean()
-# 	# 3) sd
-# 	het_sd = het_df['het_rate'].std()
-# 	# 4) upper and lower threshold for samples flag
-# 	het_up = het_mean + 5 * het_sd
-# 	het_down = het_mean - 5 * het_sd
-# 	#now flag samples for exclusion if their het rate is outside the defined boundaries
-# 	het_df['het_rem']=het_df['het_rate'].apply(lambda x: flag_record_remove(x, het_up, het_down))
-# 	het_df.to_csv(out_file,sep="\t", index=False, header=True, float_format="%.4f")
+def get_het_hwe_variants_outliers(het_table, exc_het_thr, out_file):
+	#we need to read the het table and calculate:
+	# het_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/02.sites/HetRate/WGS_ITA_PREREL_MERGED_hwe.hwe"
+	het_df = pd.read_table(het_table, sep="\t", header=0)
+	# 1) From VCFtools we already have info on excess of heterozigosity, in the form of a P_HET_EXCESS p value.
+	#    We can use that value and its distribution, to clean the data. Since we need to set a threshold we could:
+	#		a) Remove stuff in the first percentile, this way we will clean the data, removing snps putatively associated to excess of heterozygosity
+	#		b) Remove all sites with a pvalue < 1e-08, using the classic genome wide significant threshold, even if it doesn't have really sense, here.
+	# hwe_thr=0.00000001
+	# exc_het_thr=het_df['P_HET_EXCESS'].quantile(0.001)
+	# exc_het_thr=1e-8
+	to_rem_df=het_df[het_df.P_HET_EXCESS < exc_het_thr]
+	to_rem_df.to_csv(out_file,sep="\t", index=False, header=True)
 
 
 #function to generate a merged file with AF to plot

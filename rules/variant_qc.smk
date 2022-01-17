@@ -15,7 +15,7 @@ rule cleanMissingHwe:
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHwe.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHwe.e"
-	threads: 1
+	threads: 2
 	resources:
 		mem_mb=5000
 	benchmark:
@@ -82,24 +82,37 @@ rule VariantsHetRate:
 		{params.vcftools} --gzvcf {input.vcf} --hardy --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
 
-# #het rate rule: get vcftools result and extract the het rate for plotting
-# rule VariantsGetHetRateOut:
-# 	output:
-# 		os.path.join(BASE_OUT,config.get("rules").get("VariantsHetRate").get("out_dir"), "{vcf_name}_hetRate.txt")
-# 	input:
-# 		rules.VariantsHetRate.output[0]
-# 	params:
-# 		vcftools=config['VCFTOOLS']
-# 	log:
-# 		config["paths"]["log_dir"] + "/{vcf_name}-hetHwe.log",
-# 		config["paths"]["log_dir"] + "/{vcf_name}-hetHwe.e"
-# 	threads: 1
-# 	resources:
-# 		mem_mb=5000
-# 	benchmark:
-# 		config["paths"]["benchmark"] + "/{vcf_name}_hetHwe.tsv"
-# 	run:
-# 		get_het_sample_outliers(input[0], output[0])
+#het rate rule: get vcftools result and extract the het rate for plotting
+rule VariantsGetHetRateOut:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("VariantsHetRate").get("out_dir"), "{vcf_name}_ToRemHetRate.txt")
+	input:
+		rules.VariantsHetRate.output[0]
+	params:
+		vcftools=config['VCFTOOLS'],
+		exc_het_thr=config.get('rules').get('VariantsGetHetRateOut').get('exc_het_pval_thr')
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-toRemHet.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-toRemHet.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}toRemHet.tsv"
+	run:
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.INFO)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			get_het_hwe_variants_outliers(input[0],params.exc_het_thr,output[0])
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
 
 #Missing rate rule
 rule VariantsMissingRate:

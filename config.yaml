@@ -43,6 +43,8 @@ rules:
     out_dir: "02.sites/HweMissingClean"
   VariantsHetRate:
     out_dir: "02.sites/HetRate"
+  VariantsGetHetRateOut:
+    exc_het_pval_thr: "1e-8"
   VariantsMissingRate:
     out_dir: "02.sites/MissingRate"
   getPopAF:
