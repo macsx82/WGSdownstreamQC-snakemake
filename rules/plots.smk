@@ -105,7 +105,7 @@ rule PlotHetRateSampleMissing:
 		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByMiss_cohort.pdf")
 	input:
 		rules.SampleGetHetRateOut.output[0],
-		rules.sampleDP.output[0]
+		rules.SampleMissingRate.output[0]
 	params:
 		manifest_table=config.get('paths').get('manifest_table'),
 		plot_prefix=os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByMiss")
@@ -139,7 +139,7 @@ rule PlotHetRateSampleSing:
 		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateBySing_cohort.pdf")
 	input:
 		rules.SampleGetHetRateOut.output[0],
-		rules.sampleDP.output[0]
+		rules.singletons.output[0]
 	params:
 		manifest_table=config.get('paths').get('manifest_table'),
 		plot_prefix=os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateBySing")
