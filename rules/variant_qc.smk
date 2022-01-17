@@ -90,7 +90,7 @@ rule VariantsGetHetRateOut:
 		rules.VariantsHetRate.output[0]
 	params:
 		vcftools=config['VCFTOOLS'],
-		exc_het_thr=config.get('rules').get('VariantsGetHetRateOut').get('exc_het_pval_thr')
+		exc_het_thr=float(config.get('rules').get('VariantsGetHetRateOut').get('exc_het_pval_thr'))
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-toRemHet.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-toRemHet.e"
