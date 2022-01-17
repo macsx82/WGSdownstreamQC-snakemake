@@ -173,5 +173,5 @@ rule SampleROH:
 		"vcftools/0.1.16"
 	shell:
 		"""
-		{params.vcftools} --gzvcf {input.vcf} --LROH --chr {chr} --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
+		{params.vcftools} --gzvcf {input.vcf} --LROH --chr {wildcards.chr} --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
