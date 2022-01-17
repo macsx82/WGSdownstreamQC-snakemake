@@ -152,7 +152,7 @@ rule SampleMissingRate:
 #het rate rule: first get the data with vcftools
 rule SampleROH:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("SampleROH").get("out_dir"), "{vcf_name}_roh.LROH")
+		os.path.join(BASE_OUT,config.get("rules").get("SampleROH").get("out_dir"), "{vcf_name}_{chr}_roh.LROH")
 	input:
 		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
@@ -160,18 +160,18 @@ rule SampleROH:
 		vcf_index=rules.cleanMissingHwe.output[0]
 	params:
 		vcftools=config['VCFTOOLS'],
-		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleROH").get("out_dir"), "{vcf_name}_roh")
+		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleROH").get("out_dir"), "{vcf_name}_{chr}_roh")
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-SampleROH.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-SampleROH.e"
+		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-SampleROH.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-SampleROH.e"
 	threads: 1
 	resources:
 		mem_mb=5000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_SampleROH.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_SampleROH.tsv"
 	envmodules:
 		"vcftools/0.1.16"
 	shell:
 		"""
-		{params.vcftools} --gzvcf {input.vcf} --LROH --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
+		{params.vcftools} --gzvcf {input.vcf} --LROH --chr {chr} --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
