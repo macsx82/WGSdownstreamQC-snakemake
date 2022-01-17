@@ -62,6 +62,8 @@ rules:
     out_dir: "03.samples/coverage"
   SampleHetRate:
     out_dir: "03.samples/HetRate"
+  SampleROH:
+    out_dir: "03.samples/ROH"
   SampleMissingRate:
     out_dir: "03.samples/MissingRate"
   kingPCA:

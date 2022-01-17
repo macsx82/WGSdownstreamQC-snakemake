@@ -371,7 +371,6 @@ def plot_het_rate_vs_singletons(het_rate_table,sing_table,manifest_table,outplot
 	het_rate_df = pd.read_table(het_rate_table,sep="\t", header=0)
 	# sing_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/singletons/WGS_ITA_PREREL_MERGED_singletons.singletons"
 	sing_df = pd.read_table(sing_table,sep="\t", header=0)
-	
 	#calculate singleton number by sample. We count as singletons also doubleton sites
 	sing_number=sing_df.groupby(sing_df['INDV'], as_index=False).size()
 	#rename columns
@@ -380,9 +379,6 @@ def plot_het_rate_vs_singletons(het_rate_table,sing_table,manifest_table,outplot
 	merged_df = sing_number.merge(het_rate_df, how='inner',on='INDV')
 	# manifest_table="/large/___HOME___/burlo/cocca/analyses/WGS_QC_pre_release/WGS_817_samples_manifest.txt"
 	sex_df=pd.read_table(manifest_table,sep=" ", header=0)
-
-	#get all values tagged for removal and add labels to the points
-	het_rate_rem=list(het_rate_df[het_rate_df['het_rem']==1]['INDV'])
 	#define color map for sexes
 	colors_map ={'Female': 'green' , 'Male' : 'orange'}
 	#add sex to the dataframe and convert to string value
@@ -395,7 +391,6 @@ def plot_het_rate_vs_singletons(het_rate_table,sing_table,manifest_table,outplot
 	#plot the data, defining the point size based on the het value
 	for key, group in merged_df_grouped:
 		group.plot(ax=ax,kind='scatter',x='het_rate',y='SINGLETONS', color=colors_map[str(key)], label=key)
-	# merged_df.plot.scatter(y='MEAN_DEPTH',x='het_rate',s=het_rate_df['het_rate'] * 200)
 	plt.xlabel("Het rate")
 	plt.ylabel("Singleton count")
 	plt.title("Het Rate by Singleton count per sample")
@@ -417,7 +412,6 @@ def plot_het_rate_vs_singletons(het_rate_table,sing_table,manifest_table,outplot
 	#plot the data, defining the point size based on the het value
 	for key, group in merged_df_grouped_cohort:
 		group.plot(ax=ax,kind='scatter',x='het_rate',y='SINGLETONS', color=colors_cohort_map[str(key)], label=key)
-	# merged_df.plot.scatter(y='MEAN_DEPTH',x='het_rate',s=het_rate_df['het_rate'] * 200)
 	plt.xlabel("Het rate")
 	plt.ylabel("Singleton count")
 	plt.title("Het Rate by Singleton count per sample")
