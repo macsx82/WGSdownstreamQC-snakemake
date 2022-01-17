@@ -6,8 +6,6 @@ rule vcf_stats_initial:
 		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}_VQSLODrefilter.vcf.gz"),
 		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}_VQSLODrefilter.vcf.gz.tbi"),
 		rules.getSamples.output[0]
-		# rules.mergeReapplyVQSR.output[0],
-		# rules.mergeReapplyVQSR.output[1]
 	params:
 		bcftools=config['BCFTOOLS']
 	log:
@@ -34,9 +32,6 @@ rule vcf_stats_afterHWE95Clean:
 		vcf=rules.cleanMissingHwe.output[0],
 		vcf_index=rules.cleanMissingHwe.output[0],		
 		samples=rules.getSamples.output[0]
-
-		# rules.mergeReapplyVQSR.output[0],
-		# rules.mergeReapplyVQSR.output[1]
 	params:
 		bcftools=config['BCFTOOLS']
 	log:

@@ -89,6 +89,6 @@ include:
     include_prefix + "/vcf_stats.smk"
 include:
     include_prefix + "/sample_qc.smk"
-# include:
-#     include_prefix + "/nrdr.smk"
+include:
+    include_prefix + "/plots.smk"
 

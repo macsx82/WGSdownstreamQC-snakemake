@@ -56,16 +56,12 @@ rule cleanMissingHweList:
 		"""
 
 
-
 # 2) set of rules to calculate het rate and missing rate lists to be used as summary data and removal lists
 #het rate rule: first get the data with vcftools
 rule VariantsHetRate:
 	output:
 		os.path.join(BASE_OUT,config.get("rules").get("VariantsHetRate").get("out_dir"), "{vcf_name}_hwe.hwe")
-		# expand(os.path.join(BASE_OUT,config.get("rules").get("VariantsHetRate").get("out_dir"), "{{vcf_name}}_hwe.{ext}"), ext=["hwe", "log"])
 	input:
-		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
-		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
 		vcf=rules.cleanMissingHwe.output[0],
 		vcf_index=rules.cleanMissingHwe.output[1]
 	params:
@@ -109,10 +105,7 @@ rule VariantsHetRate:
 rule VariantsMissingRate:
 	output:
 		os.path.join(BASE_OUT,config.get("rules").get("VariantsMissingRate").get("out_dir"), "{vcf_name}_missing.lmiss")
-		# expand(os.path.join(BASE_OUT,config.get("rules").get("VariantsMissingRate").get("out_dir"), "{{vcf_name}}_missing.{ext}"), ext=["lmiss", "log"])
 	input:
-		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
-		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
 		vcf=rules.cleanMissingHwe.output[0],
 		vcf_index=rules.cleanMissingHwe.output[1]
 	params:
@@ -140,8 +133,6 @@ rule getPopAF:
 	output:
 		os.path.join(BASE_OUT,config.get("rules").get("getPopAF").get("out_dir"), "{vcf_name}_af.txt")
 	input:
-		# vcf=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz"),
-		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz.tbi")
 		vcf=rules.cleanMissingHwe.output[0],
 		vcf_index=rules.cleanMissingHwe.output[1]
 	params:
@@ -167,15 +158,11 @@ rule comparePopAF:
 		os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.txt"),
 		os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af.pdf"),
 		os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.pdf")
-		# expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())),
-		# expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf"), ext_ref=list(config.get("rules").get("comparePopAF").get("ref_pops").keys()))
 	input:
 		wgs_table=rules.getPopAF.output[0]
 	params:
 		ext_table=lambda wildcards: config.get("rules").get("comparePopAF").get("ref_pops").get(wildcards.ref_pop),
 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"))
-		# out_tab=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af_extrDiff.txt"),
-		# out_plot=os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{{vcf_name}}_{ext_ref}_af.pdf")
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}_{ref_pop}-comparePopAF.log",
 		config["paths"]["log_dir"] + "/{vcf_name}_{ref_pop}-comparePopAF.e"
@@ -185,7 +172,6 @@ rule comparePopAF:
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_{ref_pop}_comparePopAF.tsv"
 	run:
-		# for ext_table in ext_tables.keys():
 		outname_tab=params.out_prefix + "/"+ wildcards.vcf_name + "_" + wildcards.ref_pop + "_af_extrDiff.txt"
 		outname_plot=params.out_prefix + "/"+ wildcards.vcf_name + "_" + wildcards.ref_pop + "_af.pdf"
 		logger = logging.getLogger('logging_test')
@@ -201,5 +187,3 @@ rule comparePopAF:
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
-
-

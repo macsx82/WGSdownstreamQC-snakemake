@@ -38,14 +38,6 @@ rule kingPCA:
 		proj_pc=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaprojpc.txt"),
 		proj_dist=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaproj_Dist.txt"),
 		proj_popref=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaproj_popref.txt"),
-		# plot_pca=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_pca.png"),
-		# plot_pcaproj=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_pca_projection_on_1000GP.png")
-		# pc="{w_dir}/01_intermediate_files_to_delete/11_pca/{data_name}_cleaned.LD0.3_kingpcapc.txt",
-		# proj_pc="{w_dir}/01_intermediate_files_to_delete/11_pca/{data_name}_cleaned.LD0.3_kingpcaprojpc.txt",
-		# proj_dist="{w_dir}/01_intermediate_files_to_delete/11_pca/{data_name}_cleaned.LD0.3_kingpcaproj_Dist.txt",
-		# proj_popref="{w_dir}/01_intermediate_files_to_delete/11_pca/{data_name}_cleaned.LD0.3_kingpcaproj_popref.txt",
-		# plot_pca="{w_dir}/00_release/plots/{data_name}_pca.png",
-		# plot_pcaproj="{w_dir}/00_release/plots/{data_name}_pca_projection_on_1000GP.png"
 	input:
 		ibed=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3.bed")
 	params:
@@ -68,42 +60,3 @@ rule kingPCA:
 		{params.king} -b {input.ibed} --mds --prefix {params.pca_pref} 1> {log[0]} 2> {log[1]}
 		{params.king} -b {params.tgRefBed},{input.ibed} --projection --mds --prefix {params.proj_pref} 1>> {log[0]} 2>> {log[1]}
 		"""
-
-#plot PCA
-rule kingPCAplot:
-	output:
-		plot_pca=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_pca.pdf"),
-		plot_pcaproj=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_pca_projection_on_1000GP.pdf")
-	input:
-		pc=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcapc.txt"),
-		proj_pc=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaprojpc.txt"),
-		# proj_dist=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaproj_Dist.txt"),
-		proj_popref=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaproj_popref.txt")
-	params:
-		# pca_pref=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpca"),
-		# proj_pref=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaproj"),
-		plot_dir=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir")),
-		tgRefBed=config.get("paths").get("1000G_ref_for_king"),
-		scripts=config.get('paths').get('scripts')
-	log:
-		config["paths"]["log_dir"] + "/{vcf_name}_kingPCAplot.log",
-		config["paths"]["log_dir"] + "/{vcf_name}_kingPCAplot.e"
-	threads: 1
-	resources:
-		mem_mb=5000
-	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_kingPCAplot.tsv"
-	run:
-		logger = logging.getLogger('logging_test')
-		fh = logging.FileHandler(str(log[1]))
-		fh.setLevel(logging.INFO)
-		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-		fh.setFormatter(formatter)
-		logger.addHandler(fh)
-		try: 
-			logger.info('Starting operation!')
-			# do something
-			PCAplots(params.plot_dir,input.pc,input.proj_pc,input.proj_popref,wildcards.vcf_name)
-			logger.info('Ended!')
-		except Exception as e: 
-			logger.error(e, exc_info=True)
