@@ -186,7 +186,7 @@ rule comparePopAF:
 		config["paths"]["benchmark"] + "/{vcf_name}_{ref_pop}_comparePopAF.tsv"
 	run:
 		outname_tab=params.out_prefix + "/"+ wildcards.vcf_name + "_" + wildcards.ref_pop + "_af_extrDiff.txt"
-		outname_plot=params.out_prefix + "/"+ wildcards.vcf_name + "_" + wildcards.ref_pop + "_af.pdf"
+		outname_plot=params.out_prefix + "/"+ wildcards.vcf_name + "_" + wildcards.ref_pop + "_af.png"
 		logger = logging.getLogger('logging_test')
 		fh = logging.FileHandler(str(log[1]))
 		fh.setLevel(logging.INFO)

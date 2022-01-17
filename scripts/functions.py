@@ -226,6 +226,8 @@ def plot_het_rate_sample(het_rate_table, outplot):
 		plt.annotate(s_label,(s_name, s_rate))
 	# plt.savefig('testHETRATE.pdf')
 	plt.savefig(outplot)
+	#we could also add the het rate density distribution
+
 
 
 def plot_het_rate_vs_coverage(het_rate_table,cov_table,manifest_table,outplot_prefix):
