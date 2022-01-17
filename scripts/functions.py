@@ -262,7 +262,7 @@ def plot_het_rate_vs_coverage(het_rate_table,cov_table,manifest_table,outplot_pr
 		s_depth=merged_sex_df[merged_sex_df['INDV']==s_label]['MEAN_DEPTH']
 		plt.annotate(s_label,(s_rate,s_depth))
 	# plt.savefig('testHETbyDP.pdf')
-	plt.savefig(outplot+"_sex.pdf")
+	plt.savefig(outplot_prefix+"_sex.pdf")
 	#need to plot also by cohort
 	merged_df_grouped_cohort= merged_sex_df.groupby('COHORT')
 	# get cohorts
@@ -289,4 +289,4 @@ def plot_het_rate_vs_coverage(het_rate_table,cov_table,manifest_table,outplot_pr
 		plt.annotate(s_label,(s_rate,s_depth))
 	ax.legend(loc='upper right', ncol=3, fontsize='small')
 	# plt.savefig('testHETbyDPcohort.pdf')
-	plt.savefig(outplot+"_cohort.pdf")
+	plt.savefig(outplot_prefix+"_cohort.pdf")
