@@ -183,8 +183,8 @@ def plot_sing_vs_cov(sing_table, cov_table, outplot,out_table):
 	merged_df.to_csv(out_table,sep="\t", index=False, header=True, float_format="%.8f")
 	#plot the data, defining the point size based on the diff value
 	merged_df.plot.scatter(x='SINGLETONS',y='MEAN_DEPTH',s=merged_df['sing_rate'] * 20000)
-	plt.avxline(x=sing_up, color='r', label=' Singletons upper threshold (3SD)')
-	plt.avxline(x=sing_down, color='b', label=' Singletons lower threshold (3SD)')
+	plt.axvline(x=sing_up, color='r', label=' Singletons upper threshold (3SD)')
+	plt.axvline(x=sing_down, color='b', label=' Singletons lower threshold (3SD)')
 	plt.xlabel("SINGLETONS")
 	plt.ylabel("MEAN DEPTH")
 	plt.title("Singletons vs Mean Depth")
