@@ -23,7 +23,7 @@ paths:
   log_dir: "" #base path for log folder
   benchmark: "" #base path for benchmark folder
   tmp: "" #base path for tmp folder
-  sex_table: "" #sex table formatted with spaces as separator, and "SAMPLES_ID sex" as header. Sex should be coded as 1=Male, 2=Female
+  manifest_table: "" #sex table formatted with spaces as separator, and "SAMPLES_ID sex" as header. Sex should be coded as 1=Male, 2=Female
   1000G_ref_for_king: "" #files reference for king pca projection
   snp_array_data: "" #path and prefix for the snp array data to be used for NRDR calculations 
 

@@ -13,6 +13,7 @@ import re
 import sys
 import matplotlib.pyplot as plt
 import matplotlib
+import numpy as np
 
 
 #define some standard functions to retrieve files more easily
@@ -227,15 +228,15 @@ def plot_het_rate_sample(het_rate_table, outplot):
 	plt.savefig(outplot)
 
 
-def plot_het_rate_vs_coverage(het_rate_table,cov_table,sex_table,outplot):
+def plot_het_rate_vs_coverage(het_rate_table,cov_table,manifest_table,outplot_prefix):
 	#try to fix X11 error
 	matplotlib.use('Agg')
 	# het_rate_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/HetRate/WGS_ITA_PREREL_MERGED_hetRate.txt"
 	het_rate_df = pd.read_table(het_rate_table,sep="\t", header=0)
 	# cov_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220110/03.samples/coverage/WGS_ITA_PREREL_MERGED_dp.idepth"
 	cov_df = pd.read_table(cov_table,sep="\t", header=0)
-	#sex_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/WGS_all_samples_sex.txt"
-	sex_df=pd.read_table(sex_table,sep=" ", header=0)
+	# manifest_table="/large/___HOME___/burlo/cocca/analyses/WGS_QC_pre_release/WGS_817_samples_manifest.txt"
+	sex_df=pd.read_table(manifest_table,sep=" ", header=0)
 	# merge dataframes using the provided key
 	merged_df = het_rate_df.merge(cov_df, how='inner',on='INDV')
 	#get all values tagged for removal and add labels to the points
@@ -261,4 +262,31 @@ def plot_het_rate_vs_coverage(het_rate_table,cov_table,sex_table,outplot):
 		s_depth=merged_sex_df[merged_sex_df['INDV']==s_label]['MEAN_DEPTH']
 		plt.annotate(s_label,(s_rate,s_depth))
 	# plt.savefig('testHETbyDP.pdf')
-	plt.savefig(outplot)
+	plt.savefig(outplot+"_sex.pdf")
+	#need to plot also by cohort
+	merged_df_grouped_cohort= merged_sex_df.groupby('COHORT')
+	# get cohorts
+	cohorts_list=list(merged_df_grouped_cohort.groups.keys())
+	#Map cohorts to colors
+	vals = np.linspace(0,1,len(cohorts_list))
+	np.random.shuffle(vals)
+	#use the tab20 colormap
+	colors_cohort_map= dict(zip(cohorts_list,plt.cm.tab20(vals)))
+	# cmap = plt.cm.colors.ListedColormap(plt.cm.tab20(vals))
+	# colors_map = dict(zip(pops,colors))
+	#initialize the plot
+	fig, ax = plt.subplots()
+	#plot the data, defining the point size based on the het value
+	for key, group in merged_df_grouped_cohort:
+		group.plot(ax=ax,kind='scatter',x='het_rate',y='MEAN_DEPTH', color=colors_cohort_map[str(key)], label=key)
+	# merged_df.plot.scatter(y='MEAN_DEPTH',x='het_rate',s=het_rate_df['het_rate'] * 200)
+	plt.xlabel("Het rate")
+	plt.ylabel("Mean depth")
+	plt.title("Het Rate by mean depth per sample")
+	for s_label in het_rate_rem:
+		s_rate=merged_sex_df[merged_sex_df['INDV']==s_label]['het_rate']
+		s_depth=merged_sex_df[merged_sex_df['INDV']==s_label]['MEAN_DEPTH']
+		plt.annotate(s_label,(s_rate,s_depth))
+	ax.legend(loc='upper right', ncol=3, fontsize='small')
+	# plt.savefig('testHETbyDPcohort.pdf')
+	plt.savefig(outplot+"_cohort.pdf")

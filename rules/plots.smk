@@ -67,12 +67,14 @@ rule SingCovPlot:
 #plot het rate per sample by average coverage
 rule PlotHetRateSampleCov:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("PlotHetRateSampleCov").get("out_dir"), "{vcf_name}_hetRateByCov.pdf")
+		os.path.join(BASE_OUT,config.get("rules").get("PlotHetRateSampleCov").get("out_dir"), "{vcf_name}_hetRateByCov_sex.pdf"),
+		os.path.join(BASE_OUT,config.get("rules").get("PlotHetRateSampleCov").get("out_dir"), "{vcf_name}_hetRateByCov_cohort.pdf")
 	input:
 		rules.SampleGetHetRateOut.output[0],
 		rules.sampleDP.output[0]
 	params:
-		sex_table=config.get('paths').get('sex_table')
+		manifest_table=config.get('paths').get('manifest_table'),
+		plot_prefix=os.path.join(BASE_OUT,config.get("rules").get("PlotHetRateSampleCov").get("out_dir"), "{vcf_name}_hetRateByCov")
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleCov.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleCov.e"
@@ -91,7 +93,7 @@ rule PlotHetRateSampleCov:
 		try: 
 			logger.info('Starting operation!')
 			# do something
-			plot_het_rate_vs_coverage(input[0], input[1],params.sex_table, output[0])
+			plot_het_rate_vs_coverage(input[0], input[1],params.manifest_table, params.plot_prefix)
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
