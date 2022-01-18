@@ -2,19 +2,20 @@
 #Plot het rate per sample
 rule PlotHetRateSample:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate.pdf")
+		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_{chr}_hetRate.pdf")
 	input:
-		rules.SampleGetHetRateOut.output[0]
+		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_{chr}_hetRate.txt")
+		# rules.SampleGetHetRateOut.output[0]
 	params:
 		vcftools=config['VCFTOOLS']
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSample.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSample.e"
+		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-PlotHetRateSample.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-PlotHetRateSample.e"
 	threads: 1
 	resources:
 		mem_mb=5000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_PlotHetRateSample.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_PlotHetRateSample.tsv"
 	run:
 		logger = logging.getLogger('logging_test')
 		fh = logging.FileHandler(str(log[1]))
