@@ -117,6 +117,7 @@ rule SampleGetHetRateOut:
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
+			
 #het rate rule: get vcftools result and extract the het rate for plotting
 rule SampleGetHetRateOutChr:
 	output:

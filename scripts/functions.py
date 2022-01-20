@@ -199,11 +199,13 @@ def plot_sing_vs_cov(sing_table, cov_table, outplot,out_table):
 	plt.savefig(outplot)
 
 #function to generate a plot of N singletons vs coverage
-def plot_het_rate_sample(het_rate_table, outplot):
+def plot_het_rate_sample(het_rate_table, outplot_prefix):
 	#try to fix X11 error
 	matplotlib.use('Agg')
 	# het_rate_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/HetRate/WGS_ITA_PREREL_MERGED_hetRate.txt"
 	het_rate_df = pd.read_table(het_rate_table,sep="\t", header=0)
+	# manifest_table="/large/___HOME___/burlo/cocca/analyses/WGS_QC_pre_release/WGS_817_samples_SEQ_CENTRE_manifest.txt"
+	manifest_df=pd.read_table(manifest_table,sep=" ", header=0)
 	#get some values to plot
 	het_rate_mean = het_rate_df['het_rate'].mean()
 	#sd
@@ -216,6 +218,33 @@ def plot_het_rate_sample(het_rate_table, outplot):
 	thr_down5 = het_rate_mean - 5 * het_rate_sd
 	#get all values tagged for removal and add labels to the points
 	het_rate_rem=list(het_rate_df[het_rate_df['het_rem']==1]['INDV'])
+	#merge the manifest so we can plot using also the seq centre
+	merged_df=het_rate_df.merge(manifest_df,how='inner', left_on='INDV', right_on='SAMPLE_ID')
+	#need to plot also by cohort
+	merged_df_grouped_seq= merged_df.groupby('SEQ')
+	# get seq centre
+	seq_list=list(merged_df_grouped_seq.groups.keys())
+	#Map cohorts to colors
+	vals = np.linspace(0,1,len(seq_list))
+	np.random.shuffle(vals)
+	#use the tab20 colormap
+	colors_seq_map= dict(zip(seq_list,plt.cm.tab20(vals)))
+	#initialize the plot
+	fig, ax = plt.subplots()
+	#plot the data, defining the point size based on the het value
+	for key, group in merged_df_grouped_seq:
+		group.plot(ax=ax,kind='scatter',x='INDV',y='het_rate', color=colors_seq_map[str(key)], label=key)
+	# merged_df.plot.scatter(y='MEAN_DEPTH',x='het_rate',s=het_rate_df['het_rate'] * 200)
+	plt.xlabel("Samples")
+	plt.ylabel("Het rate")
+	plt.title("Het Rate  per sample by seq centre")
+	for s_label in het_rate_rem:
+		s_rate=merged_df[merged_df['INDV']==s_label]['INDV']
+		s_depth=merged_df[merged_df['INDV']==s_label]['het_rate']
+		plt.annotate(s_label,(s_rate,s_depth))
+	ax.legend(loc='upper right', ncol=3, fontsize='small')
+	# plt.savefig('testHETbySEQ.pdf')
+	plt.savefig(outplot_prefix+"_SEQ.pdf")
 	#plot the data, defining the point size based on the diff value
 	het_rate_df.plot.scatter(x='INDV',y='het_rate',s=het_rate_df['het_rate'] * 200)
 	plt.axhline(y=thr_up1, color='yellow', label='Het Rate upper threshold (1SD)')
@@ -233,7 +262,7 @@ def plot_het_rate_sample(het_rate_table, outplot):
 		s_rate=het_rate_df[het_rate_df['INDV']==s_label]['het_rate']
 		plt.annotate(s_label,(s_name, s_rate))
 	# plt.savefig('testHETRATE.pdf')
-	plt.savefig(outplot)
+	plt.savefig(outplot_prefix+".pdf")
 	#we could also add the het rate density distribution
 
 

@@ -2,12 +2,13 @@
 #Plot het rate per sample
 rule PlotHetRateSample:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_{chr}_hetRate.pdf")
+		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate.pdf"),
+		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate_SEQ.pdf"),
 	input:
-		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_{chr}_hetRate.txt")
-		# rules.SampleGetHetRateOut.output[0]
+		rules.SampleGetHetRateOut.output[0]
 	params:
-		vcftools=config['VCFTOOLS']
+		vcftools=config['VCFTOOLS'],
+		outplot_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate")
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-PlotHetRateSample.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-PlotHetRateSample.e"
@@ -26,10 +27,44 @@ rule PlotHetRateSample:
 		try: 
 			logger.info('Starting operation!')
 			# do something
-			plot_het_rate_sample(input[0], output[0])
+			plot_het_rate_sample(input[0], params.outplot_prefix)
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
+
+# #Plot het rate per sample
+# rule PlotHetRateSampleChr:
+# 	output:
+# 		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_{chr}_hetRate.pdf"),
+# 		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_{chr}_hetRate_SEQ.pdf"),
+# 	input:
+# 		# os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_{chr}_hetRate.txt")
+# 		rules.SampleGetHetRateOut.output[0]
+# 	params:
+# 		vcftools=config['VCFTOOLS'],
+# 		outplot_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_{chr}_hetRate")
+# 	log:
+# 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-PlotHetRateSample.log",
+# 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-PlotHetRateSample.e"
+# 	threads: 1
+# 	resources:
+# 		mem_mb=5000
+# 	benchmark:
+# 		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_PlotHetRateSample.tsv"
+# 	run:
+# 		logger = logging.getLogger('logging_test')
+# 		fh = logging.FileHandler(str(log[1]))
+# 		fh.setLevel(logging.DEBUG)
+# 		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+# 		fh.setFormatter(formatter)
+# 		logger.addHandler(fh)
+# 		try: 
+# 			logger.info('Starting operation!')
+# 			# do something
+# 			plot_het_rate_sample(input[0], params.outplot_prefix)
+# 			logger.info('Ended!')
+# 		except Exception as e: 
+# 			logger.error(e, exc_info=True)
 
 
 #plot singletons vs coverage

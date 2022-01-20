@@ -70,8 +70,8 @@ rules:
     out_dir: "03.samples/PCA"
   SamplePlots:
     out_dir: "03.samples/plots"
-  Plink2Vcf:
-    out_dir: "04.nrdr/array"
+  VcfMultiClean:
+    out_dir: "04.nrdr/NoMulti"
   NRDR:
     out_dir: "04.nrdr"
   stats:
