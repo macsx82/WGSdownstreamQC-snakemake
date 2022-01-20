@@ -73,7 +73,7 @@ rules:
   VcfMultiClean:
     out_dir: "04.nrdr/NoMulti"
   NRDR:
-    out_dir: "04.nrdr"
+    out_dir: "04.nrdr/tables"
   stats:
     out_dir: "05.stats"
 

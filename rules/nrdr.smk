@@ -73,30 +73,30 @@ rule getNRDbySiteAndSamples:
 		"bcftools/1.14"
 	shell:
 		"""
-
-		egrep "^GCsS" {input[0]} > {output[1]}
-		
+		egrep "^GCsS" {input[0]} > {output[0]}
+		egrep "^PSD" {input[0]} > {output[1]}
+	
 		"""
 
-#3) get only info for NRD by sample
-rule getNRDbySample:
-	output:
-		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDRsamples.txt"),
-	input:
-		rules.NRDstats.output[0]
-	params:
-		bcftools=config['BCFTOOLS']
-	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-getNRDbySample.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-getNRDbySample.e"
-	threads: 1
-	resources:
-		mem_mb=10000
-	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_getNRDbySample.tsv"
-	envmodules:
-		"bcftools/1.14"
-	shell:
-		"""
-		{params.bcftools} stats {input.snp_array} {input.vcf} -S {input.samples} --verbose > {output[0]} 2> {log[1]}
-		"""
+#3) Process the splitted information to calculate the complete tables per sample and per site
+# rule getNRDbySample:
+# 	output:
+# 		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDRsamples.txt"),
+# 	input:
+# 		rules.NRDstats.output[0]
+# 	params:
+# 		bcftools=config['BCFTOOLS']
+# 	log:
+# 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-getNRDbySample.log",
+# 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-getNRDbySample.e"
+# 	threads: 1
+# 	resources:
+# 		mem_mb=10000
+# 	benchmark:
+# 		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_getNRDbySample.tsv"
+# 	envmodules:
+# 		"bcftools/1.14"
+# 	shell:
+# 		"""
+# 		{params.bcftools} stats {input.snp_array} {input.vcf} -S {input.samples} --verbose > {output[0]} 2> {log[1]}
+# 		"""
