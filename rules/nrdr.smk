@@ -29,7 +29,7 @@ rule VcfMultiClean:
 #2) generate concordance stats (among others) using bcftools
 rule NRDstats:
 	output:
-		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDR.txt"),
+		os.path.join(BASE_OUT, config.get('rules').get('NRDR').get('out_dir'), "{vcf_name}_{chr}_NRDR.txt"),
 	input:
 		snp_array=config.get('paths').get('snp_array_data'),
 		vcf=rules.VcfMultiClean.output[0],
@@ -55,8 +55,8 @@ rule NRDstats:
 #3) get only info for NRD by sites
 rule getNRDbySiteAndSamples:
 	output:
-		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDRsites.txt"),
-		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDRsamples.txt")
+		os.path.join(BASE_OUT, config.get('rules').get('NRDR').get('out_dir'), "{vcf_name}_{chr}_NRDRsites.txt"),
+		os.path.join(BASE_OUT, config.get('rules').get('NRDR').get('out_dir'), "{vcf_name}_{chr}_NRDRsamples.txt")
 	input:
 		rules.NRDstats.output[0]
 	params:
