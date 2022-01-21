@@ -73,8 +73,8 @@ rule getNRDbySiteAndSamples:
 		"bcftools/1.14"
 	shell:
 		"""
-		egrep "^GCsS" {input[0]} > {output[0]}
-		egrep "^PSD" {input[0]} > {output[1]}
+		egrep "^PSD" {input[0]} > {output[0]}
+		egrep "^GCsS" {input[0]} > {output[1]}
 	
 		"""
 
