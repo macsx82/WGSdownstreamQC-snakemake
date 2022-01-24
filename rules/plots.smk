@@ -202,6 +202,44 @@ rule PlotHetRateSampleSing:
 		except Exception as e: 
 			logger.error(e, exc_info=True)
 
+
+
+#plot het rate per sample by singleton count
+rule PlotHetRateSampleNRD:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByNRD_sex.pdf"),
+		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByNRD_cohort.pdf"),
+		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByNRD_seq.pdf")
+	input:
+		rules.SampleGetHetRateOut.output[0],
+		rules.singletons.output[0]
+	params:
+		manifest_table=config.get('paths').get('manifest_table'),
+		plot_prefix=os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByNRD")
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleNRD.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSampleNRD.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_PlotHetRateSampleNRD.tsv"
+	run:
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.DEBUG)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			plot_het_rate_vs_nrd(input[0], input[1],params.manifest_table, params.plot_prefix)
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
+
+
 #plot PCA
 rule kingPCAplot:
 	output:

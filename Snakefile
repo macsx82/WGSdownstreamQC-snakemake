@@ -83,6 +83,8 @@ rule all:
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByCov_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort']),
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByMiss_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort']),
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateBySing_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort']),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByNRD_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort','seq']),
+
         #nrdr rules
         expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDR.txt"), vcf_name=out_prefix, chrom=chroms),
         expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDRsites.txt"), vcf_name=out_prefix, chrom=chroms),
