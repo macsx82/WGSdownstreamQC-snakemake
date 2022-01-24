@@ -157,7 +157,6 @@ def af_diff(wgs_table, ext_table, outfile, outplot,outplot_extreme):
 #function to collect all NRD information to calculate the genome wide NRD by sample
 def get_NRD_by_sample(all_NRD, outfile):
 	# we have all files splitted by chr, we need to generate a dictionary for each sample and load the data we need
-	# all_NRD = ["/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr1_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr2_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr3_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr4_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr5_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr6_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr7_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr8_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr9_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr10_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr11_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr12_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr13_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr14_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr15_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr16_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr17_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr18_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr19_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr20_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr21_NRDRsamples.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr22_NRDRsamples.txt"]
 	samples_nrd_dict=collections.defaultdict(lambda: collections.defaultdict(list))
 	for sample_nrd in all_NRD:
 		# sample_nrd="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr1_NRDRsamples.txt"
@@ -175,20 +174,10 @@ def get_NRD_by_sample(all_NRD, outfile):
 			samples_nrd_dict[sample]["all_non_ref"].append(all_non_ref)
 	
 	nrd_dict={}
-	#open the file
-	# outfile="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/test_samples_nrd.txt"
-	#create the first header line
-	# header_line="\t".join(["SAMPLE_ID","NRD"])
-	#write header line to file
-	# createAndOpen(outfile, 'w').write(header_line + os.linesep)
 	#now calculate the wg nrd for all samples and print all in the output file
 	for sample in samples_nrd_dict.keys():
-		# nrd_by_sample=str((sum(samples_nrd_dict[sample]['mismatches'])/sum(samples_nrd_dict[sample]['all_non_ref']))*100)
 		nrd_dict[sample]=(sum(samples_nrd_dict[sample]['mismatches'])/sum(samples_nrd_dict[sample]['all_non_ref']))*100
-		# print(sample,nrd_by_sample)
-		# createAndOpen(outfile, 'a').write("\t".join([sample,nrd_by_sample]) + os.linesep)
 	#we want to provide a flag for removal for the highest NRD samples (+5sd), so we need a pandas dataframe!!
-	# nrd_df=pd.DataFrame.from_dict(nrd_dict,orient='index')
 	nrd_df=pd.DataFrame(list(nrd_dict.items()))
 	nrd_df.columns = ['SAMPLE_ID','NRD']
 	#get mean and sd
@@ -199,3 +188,24 @@ def get_NRD_by_sample(all_NRD, outfile):
 	#now flag samples for exclusion if their het rate is outside the defined boundaries
 	nrd_df['nrd_rem']=nrd_df['NRD'].apply(lambda x: flag_record_remove(x, [nrd_up], 'gt'))
 	nrd_df.to_csv(outfile,sep="\t", index=False, header=True, float_format="%.6f")
+
+
+#function to collect all NRD information by site and flag for removal sites with NRD > 3 sd
+def get_NRD_by_site(all_NRD, outfile):
+	# we have all files splitted by chr, we need to generate a dictionary for each sample and load the data we need
+	# all_NRD = ["/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr1_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr2_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr3_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr4_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr5_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr6_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr7_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr8_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr9_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr10_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr11_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr12_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr13_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr14_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr15_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr16_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr17_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr18_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr19_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr20_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr21_NRDRsites.txt","/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr22_NRDRsites.txt"]
+	# samples_nrd_dict=collections.defaultdict(lambda: collections.defaultdict(list))
+	sites_nrd_df= pd.DataFrame()
+	for chr_nrd in all_NRD:
+		nrd_df = pd.read_table(chr_nrd,sep="\t", header=None)
+		sites_nrd_df=sites_nrd_df.append(nrd_df)
+	sites_nrd_df=sites_nrd_df.drop(axis='columns',labels=[0])
+	sites_nrd_df.columns=['CHROM','POS','MATCHES','MISMATCHES','NRD']
+	#get mean and sd
+	nrd_mean=sites_nrd_df.NRD.mean()
+	nrd_sd=sites_nrd_df.NRD.std()
+	#upper threshold for samples flag
+	nrd_up = nrd_mean + 3 * nrd_sd
+	#now flag samples for exclusion if their het rate is outside the defined boundaries
+	sites_nrd_df['nrd_rem']=sites_nrd_df['NRD'].apply(lambda x: flag_record_remove(x, [nrd_up], 'gt'))
+	sites_nrd_df.to_csv(outfile,sep="\t", index=False, header=True, float_format="%.6f")

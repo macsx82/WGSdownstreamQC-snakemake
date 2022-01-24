@@ -114,7 +114,7 @@ rule NRDbySite:
 	output:
 		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"),
 	input:
-		expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{{vcf_name}}_{chr}_NRDRsites.txt"), chr=chroms)
+		all_sites_NRD=expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{{vcf_name}}_{chr}_NRDRsites.txt"), chr=chroms)
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySite.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySite.e"
@@ -123,7 +123,17 @@ rule NRDbySite:
 		mem_mb=2000
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_NRDbySite.tsv"
-	shell:
-		"""
-		cat {input} > {output[0]} 2> {log[1]}
-		"""
+	run:
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.DEBUG)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			get_NRD_by_site(input.all_sites_NRD, output[0])
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
