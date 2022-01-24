@@ -106,7 +106,7 @@ include:
 include:
     include_prefix + "/sample_qc.smk"
 include:
-    include_prefix + "/plots.smk"
-include:
     include_prefix + "/nrdr.smk"
+include:
+    include_prefix + "/plots.smk"
 
