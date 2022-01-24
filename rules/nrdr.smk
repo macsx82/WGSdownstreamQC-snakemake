@@ -91,7 +91,7 @@ rule NRDbySample:
 		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySample.e"
 	threads: 1
 	resources:
-		mem_mb=10000
+		mem_mb=5000
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_NRDbySample.tsv"
 	run:
@@ -105,6 +105,26 @@ rule NRDbySample:
 			logger.info('Starting operation!')
 			print(all_samples_NRD)
 			# do something
+			get_NRD_by_sample(input.all_sammples_NRD, output[0])
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
+
+#simple rule to concat all chr NRD sites values and add a fla
+rule NRDbySite:
+	output:
+		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"),
+	input:
+		all_samples_NRD=expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{{vcf_name}}_{chr}_NRDRsites.txt"), chr=chroms)
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySite.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySite.e"
+	threads: 1
+	resources:
+		mem_mb=2000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_NRDbySite.tsv"
+	shell:
+		"""
+		cat {input} > {output[0]} 2> {log[1]}
+		"""
