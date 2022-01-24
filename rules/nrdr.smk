@@ -103,7 +103,6 @@ rule NRDbySample:
 		logger.addHandler(fh)
 		try: 
 			logger.info('Starting operation!')
-			print(all_samples_NRD)
 			# do something
 			get_NRD_by_sample(input.all_sammples_NRD, output[0])
 			logger.info('Ended!')
@@ -115,7 +114,7 @@ rule NRDbySite:
 	output:
 		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"),
 	input:
-		all_samples_NRD=expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{{vcf_name}}_{chr}_NRDRsites.txt"), chr=chroms)
+		expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{{vcf_name}}_{chr}_NRDRsites.txt"), chr=chroms)
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySite.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySite.e"
