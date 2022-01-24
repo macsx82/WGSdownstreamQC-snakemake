@@ -212,7 +212,7 @@ rule PlotHetRateSampleNRD:
 		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByNRD_seq.pdf")
 	input:
 		rules.SampleGetHetRateOut.output[0],
-		rules.singletons.output[0]
+		rules.NRDbySample.output[0]
 	params:
 		manifest_table=config.get('paths').get('manifest_table'),
 		plot_prefix=os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByNRD")
