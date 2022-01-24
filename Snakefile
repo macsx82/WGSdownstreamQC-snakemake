@@ -84,10 +84,10 @@ rule all:
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByMiss_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort']),
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateBySing_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort']),
         #nrdr rules
-        expand(os.path.join(BASE_OUT, config.get('rules').get('NRDR').get('out_dir'), "{vcf_name}_{chrom}_NRDR.txt"), vcf_name=out_prefix, chrom=chroms),
-        expand(os.path.join(BASE_OUT, config.get('rules').get('NRDR').get('out_dir'), "{vcf_name}_{chrom}_NRDRsites.txt"), vcf_name=out_prefix, chrom=chroms),
-        expand(os.path.join(BASE_OUT, config.get('rules').get('NRDR').get('out_dir'), "{vcf_name}_{chrom}_NRDRsamples.txt"), vcf_name=out_prefix, chrom=chroms),
-        expand(os.path.join(BASE_OUT, config.get('rules').get('NRDR').get('out_dir'), "{vcf_name}_NRDRsamples.txt"), vcf_name=out_prefix),
+        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDR.txt"), vcf_name=out_prefix, chrom=chroms),
+        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDRsites.txt"), vcf_name=out_prefix, chrom=chroms),
+        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDRsamples.txt"), vcf_name=out_prefix, chrom=chroms),
+        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt"), vcf_name=out_prefix),
         #stats
         expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_initial.stats"), vcf_name=out_prefix),
         expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_HWE95call.stats"), vcf_name=out_prefix)
