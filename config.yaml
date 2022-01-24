@@ -72,7 +72,7 @@ rules:
     out_dir: "03.samples/plots"
   VcfMultiClean:
     out_dir: "04.nrdr/NoMulti"
-  NRDR:
+  NRD:
     out_dir: "04.nrdr/tables"
   stats:
     out_dir: "05.stats"
