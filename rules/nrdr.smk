@@ -26,19 +26,50 @@ rule VcfMultiClean:
 		{params.bcftools} index -t {output[0]}
 		"""
 
+#get the common samples from the array data
+rule VcfArrayCommonSamples:
+	output:
+		os.path.join(BASE_OUT, config.get('rules').get('VcfMultiClean').get('out_dir'), "{vcf_name}_VcfArrayCommonSamples.vcf.gz"),
+		os.path.join(BASE_OUT, config.get('rules').get('VcfMultiClean').get('out_dir'), "{vcf_name}_VcfArrayCommonSamples.vcf.gz.tbi"),
+		temp(os.path.join(BASE_OUT, config.get('rules').get('VcfMultiClean').get('out_dir'), "{vcf_name}_VcfArraySamples.txt"))
+	input:
+		snp_array=config.get('paths').get('snp_array_data'),
+		wgs_samples=rules.getSamples.output[0]
+		# rules.VcfMultiClean.output[0],
+	params:
+		bcftools=config['BCFTOOLS']
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-VcfArrayCommonSamples.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-VcfArrayCommonSamples.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_VcfArrayCommonSamples.tsv"
+	envmodules:
+		"bcftools/1.14"
+	shell:
+		"""
+		({params.bcftools} view -S {input.wgs_samples} --force-samples -O z -o {output[0]} {input.snp_array}) 1> {log[0]} 2> {log[1]}
+		{params.bcftools} index -t {output[0]}
+		{params.bcftools} query -l {output[0]} > {output[2]}
+		"""
+
+#get the common samples from the wgs data
 rule VcfWgsArrayCommon:
 	output:
 		os.path.join(BASE_OUT, config.get('rules').get('VcfMultiClean').get('out_dir'), "{vcf_name}_VcfWgsArrayCommon.vcf.gz"),
 		os.path.join(BASE_OUT, config.get('rules').get('VcfMultiClean').get('out_dir'), "{vcf_name}_VcfWgsArrayCommon.vcf.gz.tbi"),
 	input:
-		rules.VcfMultiClean.output[0],
-		snp_array=config.get('paths').get('snp_array_data'),
+		vcf_file=rules.VcfMultiClean.output[0],
+		snp_array=rules.VcfArrayCommonSamples.output[0],
+		samples_list=rules.VcfArrayCommonSamples.output[2]
 	params:
 		bcftools=config['BCFTOOLS']
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-VcfWgsArrayCommon.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-VcfWgsArrayCommon.e"
-	threads: 2
+	threads: 1
 	resources:
 		mem_mb=5000
 	benchmark:
@@ -47,7 +78,7 @@ rule VcfWgsArrayCommon:
 		"bcftools/1.14"
 	shell:
 		"""
-		({params.bcftools} view -R {input[1]} -O z -o {output[0]} {input[0]}) 1> {log[0]} 2> {log[1]}
+		({params.bcftools} view -R {input.snp_array} -S {input.samples_list} --force-samples -O z -o {output[0]} {input.vcf_file}) 1> {log[0]} 2> {log[1]}
 		{params.bcftools} index -t {output[0]}
 		"""
 
@@ -56,10 +87,10 @@ rule NRDstats:
 	output:
 		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDR.txt"),
 	input:
-		snp_array=config.get('paths').get('snp_array_data'),
+		snp_array=rules.VcfArrayCommonSamples.output[0],
 		vcf=rules.VcfWgsArrayCommon.output[0],
 		vcf_index=rules.VcfWgsArrayCommon.output[1],
-		samples=rules.getSamples.output[0]
+		samples=rules.VcfArrayCommonSamples.output[2]
 	params:
 		bcftools=config['BCFTOOLS']
 	log:
