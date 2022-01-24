@@ -104,7 +104,7 @@ rule NRDbySample:
 		try: 
 			logger.info('Starting operation!')
 			# do something
-			get_NRD_by_sample(input.all_sammples_NRD, output[0])
+			get_NRD_by_sample(input.all_samples_NRD, output[0])
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
