@@ -26,14 +26,39 @@ rule VcfMultiClean:
 		{params.bcftools} index -t {output[0]}
 		"""
 
+rule VcfWgsArrayCommon:
+	output:
+		os.path.join(BASE_OUT, config.get('rules').get('VcfMultiClean').get('out_dir'), "{vcf_name}_VcfWgsArrayCommon.vcf.gz"),
+		os.path.join(BASE_OUT, config.get('rules').get('VcfMultiClean').get('out_dir'), "{vcf_name}_VcfWgsArrayCommon.vcf.gz.tbi"),
+	input:
+		rules.VcfMultiClean.output[0],
+		snp_array=config.get('paths').get('snp_array_data'),
+	params:
+		bcftools=config['BCFTOOLS']
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-VcfWgsArrayCommon.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-VcfWgsArrayCommon.e"
+	threads: 2
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_VcfWgsArrayCommon.tsv"
+	envmodules:
+		"bcftools/1.14"
+	shell:
+		"""
+		({params.bcftools} view -R {input[1]} -O z -o {output[0]} {input[0]}) 1> {log[0]} 2> {log[1]}
+		{params.bcftools} index -t {output[0]}
+		"""
+
 #2) generate concordance stats (among others) using bcftools
 rule NRDstats:
 	output:
 		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDR.txt"),
 	input:
 		snp_array=config.get('paths').get('snp_array_data'),
-		vcf=rules.VcfMultiClean.output[0],
-		vcf_index=rules.VcfMultiClean.output[1],
+		vcf=rules.VcfWgsArrayCommon.output[0],
+		vcf_index=rules.VcfWgsArrayCommon.output[1],
 		samples=rules.getSamples.output[0]
 	params:
 		bcftools=config['BCFTOOLS']
