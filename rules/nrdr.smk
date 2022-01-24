@@ -83,7 +83,7 @@ rule NRDbySample:
 	output:
 		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt"),
 	input:
-		all_samples_NRD=lambda wildcards: os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), wildcards.vcf_name+"_"+wildcards.chr+"_NRDsamples.txt")
+		all_samples_NRD=expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{{vcf_name}}_{chr}_NRDsamples.txt"), chr=chroms)
 	params:
 		bcftools=config['BCFTOOLS']
 	log:
