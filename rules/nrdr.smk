@@ -75,28 +75,36 @@ rule getNRDbySiteAndSamples:
 		"""
 		egrep "^PSD" {input[0]} > {output[0]}
 		egrep "^GCsS" {input[0]} > {output[1]}
-	
 		"""
 
 #3) Process the splitted information to calculate the complete tables per sample and per site
-# rule getNRDbySample:
-# 	output:
-# 		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDRsamples.txt"),
-# 	input:
-# 		rules.NRDstats.output[0]
-# 	params:
-# 		bcftools=config['BCFTOOLS']
-# 	log:
-# 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-getNRDbySample.log",
-# 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-getNRDbySample.e"
-# 	threads: 1
-# 	resources:
-# 		mem_mb=10000
-# 	benchmark:
-# 		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_getNRDbySample.tsv"
-# 	envmodules:
-# 		"bcftools/1.14"
-# 	shell:
-# 		"""
-# 		{params.bcftools} stats {input.snp_array} {input.vcf} -S {input.samples} --verbose > {output[0]} 2> {log[1]}
-# 		"""
+# this is an aggregation rule, since we need a genome wide value for concordance and non reference discordance
+rule NRDbySample:
+	output:
+		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt"),
+	input:
+		all_samples_NRD=lambda wildcards: os.path.join(BASE_OUT, config.get('rules').get('NRDR').get('out_dir'), "{wildcards.vcf_name}_{wildcards.chr}_NRDRsamples.txt")
+	params:
+		bcftools=config['BCFTOOLS']
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySample.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySample.e"
+	threads: 1
+	resources:
+		mem_mb=10000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_NRDbySample.tsv"
+	run:
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.DEBUG)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			print(all_samples_NRD)
+			# do something
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)
