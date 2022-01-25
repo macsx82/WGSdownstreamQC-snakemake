@@ -49,11 +49,10 @@ rule cleanMissingHweList:
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_cleanMissingHweList.tsv"
 	envmodules:
-		"vcftools/0.1.16"
+		"bcftools/1.14"
 	shell:
 		"""
 		({params.bcftools} view -r {wildcards.chr} {input.vcf} |{params.bcftools} +fill-tags -- -t all,F_MISSING,HWE | {params.bcftools} view -i "HWE < {params.hwe_thr} | F_MISSING > {params.missing_thr}" | {params.bcftools} view -G -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
-		#({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --removed-sites --out {params.out_prefix}) 1> {log[0]} 2> {log[1]}
 		"""
 
 
