@@ -25,6 +25,7 @@ rule vcf_stats_initial:
 
 rule vcf_stats_afterHWE95Clean:
 	output:
+		# os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_{chr}_HWE95call.stats")
 		os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_HWE95call.stats")
 	input:
 		# os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
@@ -35,8 +36,8 @@ rule vcf_stats_afterHWE95Clean:
 	params:
 		bcftools=config['BCFTOOLS']
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}_stats_HWE95call.log",
-		config["paths"]["log_dir"] + "/{vcf_name}_stats_HWE95call.e"
+		config["paths"]["log_dir"] + "/{vcf_name}-stats_HWE95call.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-stats_HWE95call.e"
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_stats_HWE95call.tsv"
 	resources:
