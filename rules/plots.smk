@@ -8,7 +8,8 @@ rule PlotHetRateSample:
 		rules.SampleGetHetRateOut.output[0]
 	params:
 		vcftools=config['VCFTOOLS'],
-		outplot_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate")
+		outplot_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate"),
+		manifest_table=config.get('paths').get('manifest_table')
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSample.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-PlotHetRateSample.e"
@@ -27,7 +28,7 @@ rule PlotHetRateSample:
 		try: 
 			logger.info('Starting operation!')
 			# do something
-			plot_het_rate_sample(input[0], params.outplot_prefix)
+			plot_het_rate_sample(input[0], params.manifest_table,params.outplot_prefix)
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)

@@ -62,7 +62,7 @@ def plot_sing_vs_cov(sing_table, cov_table, outplot,out_table):
 	plt.savefig(outplot)
 
 #function to generate a plot of N singletons vs coverage
-def plot_het_rate_sample(het_rate_table, outplot_prefix):
+def plot_het_rate_sample(het_rate_table, manifest_table,outplot_prefix):
 	#try to fix X11 error
 	matplotlib.use('Agg')
 	# het_rate_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/03.samples/HetRate/WGS_ITA_PREREL_MERGED_hetRate.txt"
