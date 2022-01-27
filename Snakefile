@@ -24,6 +24,7 @@ include_prefix="rules"
 BASE_OUT=config["paths"]["base_out"]
 MAIN_VCF_INPUT=config["paths"]["input_vcf"]
 chroms=config["chrs"]
+autosomal=[ x for x in config["chrs"] if x != "chrX" ]
 PROJECT_NAME=config["project_name"]
 out_prefix=PROJECT_NAME + "_MERGED"
 
@@ -86,10 +87,10 @@ rule all:
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateBySing_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort']),
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByNRD_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort','seq']),
 
-        #nrdr rules
-        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDR.txt"), vcf_name=out_prefix, chrom=chroms),
-        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDRsites.txt"), vcf_name=out_prefix, chrom=chroms),
-        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDRsamples.txt"), vcf_name=out_prefix, chrom=chroms),
+        #nrdr rules, to work only on AUTOSOMAL chromosomes
+        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDR.txt"), vcf_name=out_prefix, chrom=autosomal),
+        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDRsites.txt"), vcf_name=out_prefix, chrom=autosomal),
+        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDRsamples.txt"), vcf_name=out_prefix, chrom=autosomal),
         expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDR{subset}.txt"), vcf_name=out_prefix, subset=['samples','sites']),
         #stats
         expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_initial.stats"), vcf_name=out_prefix),
