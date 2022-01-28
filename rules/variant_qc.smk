@@ -21,7 +21,6 @@ rule cleanMissingHwe:
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_cleanMissingHwe.tsv"
 	envmodules:
-		"vcftools/0.1.16",
 		"bcftools/1.14"
 	shell:
 		"""
@@ -65,7 +64,7 @@ rule cleanMissingHweList:
 		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}_VQSLODrefilter.vcf.gz"),
 		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}_VQSLODrefilter.vcf.gz.tbi")
 	params:
-		vcftools=config['VCFTOOLS'],
+		bcftools=config['BCFTOOLS'],
 		hwe_thr=config.get("rules").get("cleanMissingHwe").get("hwe_thr"),
 		missing_thr=config.get("rules").get("cleanMissingHwe").get("missing_thr"),
 		# out_prefix=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call")
@@ -78,12 +77,12 @@ rule cleanMissingHweList:
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_cleanMissingHweList.tsv"
 	envmodules:
-		"vcftools/0.1.16"
+		"bcftools/1.14"
 	shell:
 		"""
 		({params.bcftools} +fill-tags {input.vcf} -- -t all,F_MISSING,HWE | {params.bcftools} view -i "HWE < {params.hwe_thr} | F_MISSING > {params.missing_thr}" | {params.bcftools} view -G -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
-		#({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --removed-sites --out {params.out_prefix}) 1> {log[0]} 2> {log[1]}
 		"""
+		#({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --removed-sites --out {params.out_prefix}) 1> {log[0]} 2> {log[1]}
 
 
 # 2) set of rules to calculate het rate and missing rate lists to be used as summary data and removal lists
