@@ -85,7 +85,8 @@ rule VcfWgsArrayCommon:
 #2) generate concordance stats (among others) using bcftools
 rule NRDstats:
 	output:
-		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDR.txt"),
+		# os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDR.txt"),
+		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDR.txt"),
 	input:
 		snp_array=rules.VcfArrayCommonSamples.output[0],
 		vcf=rules.VcfWgsArrayCommon.output[0],
@@ -94,37 +95,37 @@ rule NRDstats:
 	params:
 		bcftools=config['BCFTOOLS']
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-NRD.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-NRD.e"
+		config["paths"]["log_dir"] + "/{vcf_name}-NRD.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-NRD.e"
 	threads: 1
 	resources:
 		mem_mb=10000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_NRD.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_NRD.tsv"
 	envmodules:
 		"bcftools/1.14"
 	shell:
 		"""
-		{params.bcftools} stats -r {wildcards.chr} {input.snp_array} {input.vcf} -S {input.samples} --verbose > {output[0]} 2> {log[1]}
+		{params.bcftools} stats {input.snp_array} {input.vcf} -S {input.samples} --verbose > {output[0]} 2> {log[1]}
 		"""
 
 #3) get only info for NRD by sites
 rule getNRDbySiteAndSamples:
 	output:
-		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDRsites.txt"),
-		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDRsamples.txt")
+		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"),
+		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt")
 	input:
 		rules.NRDstats.output[0]
 	params:
 		bcftools=config['BCFTOOLS']
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-getNRDbySiteAnSamples.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-getNRDbySiteAnSamples.e"
+		config["paths"]["log_dir"] + "/{vcf_name}-getNRDbySiteAnSamples.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-getNRDbySiteAnSamples.e"
 	threads: 1
 	resources:
 		mem_mb=10000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_getNRDbySiteAnSamples.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_getNRDbySiteAnSamples.tsv"
 	envmodules:
 		"bcftools/1.14"
 	shell:
@@ -139,6 +140,7 @@ rule NRDbySample:
 	output:
 		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt"),
 	input:
+		# all_samples_NRD=expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{{vcf_name}}_{chr}_NRDRsamples.txt"), chr=autosomal)
 		all_samples_NRD=expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{{vcf_name}}_{chr}_NRDRsamples.txt"), chr=autosomal)
 	params:
 		bcftools=config['BCFTOOLS']
