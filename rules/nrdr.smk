@@ -82,7 +82,7 @@ rule VcfWgsArrayCommon:
 		{params.bcftools} index -t {output[0]}
 		"""
 
-#2) generate concordance stats (among others) using bcftools
+#2) generate concordance stats (among others) using bcftools by chromosome
 rule NRDstats:
 	output:
 		# os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chr}_NRDR.txt"),
@@ -109,7 +109,7 @@ rule NRDstats:
 		{params.bcftools} stats {input.snp_array} {input.vcf} -S {input.samples} --verbose > {output[0]} 2> {log[1]}
 		"""
 
-#3) get only info for NRD by sites
+#3) get only info for NRD by sites and samples, for each chromosome
 rule getNRDbySiteAndSamples:
 	output:
 		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"),
@@ -167,7 +167,7 @@ rule NRDbySample:
 		except Exception as e: 
 			logger.error(e, exc_info=True)
 
-#simple rule to concat all chr NRD sites values and add a fla
+#simple AGGREGATION rule to concat all chr NRD sites values and add a fla
 rule NRDbySite:
 	output:
 		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{out_name}_NRDRsites.txt"),

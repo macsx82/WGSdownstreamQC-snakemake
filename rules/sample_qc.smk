@@ -1,5 +1,36 @@
 #module containing sample based QC for WGS data
 
+#we may need data from varcall pipeline
+#or we can use Read Depth by Sample
+rule sampleDP:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{out_name}_dp.idepth")
+	input:
+		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
+		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		MAIN_VCF_INPUT
+		# vcf=rules.cleanMissingHwe.output[0],
+		# vcf_index=rules.cleanMissingHwe.output[0]
+	params:
+		bcftools=config['BCFTOOLS'],
+		vcftools=config['VCFTOOLS'],
+		tmp=os.path.join(BASE_OUT,config.get("paths").get("tmp")),
+		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{out_name}_dp")
+	log:
+		config["paths"]["log_dir"] + "/{out_name}-sampleDP.log",
+		config["paths"]["log_dir"] + "/{out_name}-sampleDP.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{out_name}_sampleDP.tsv"
+	envmodules:
+		"vcftools/0.1.16"
+	shell:
+		"""
+		{params.vcftools} --gzvcf {input.vcf} --depth --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
+		"""
+
 #extract singleton count for each sample
 rule singletons:
 	output:
@@ -150,35 +181,6 @@ rule SampleGetHetRateOut:
 # 		except Exception as e: 
 # 			logger.error(e, exc_info=True)
 
-#we may need data from varcall pipeline
-#or we can use Read Depth by Sample
-rule sampleDP:
-	output:
-		os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{vcf_name}_dp.idepth")
-	input:
-		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
-		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
-		vcf=rules.cleanMissingHwe.output[0],
-		vcf_index=rules.cleanMissingHwe.output[0]
-	params:
-		bcftools=config['BCFTOOLS'],
-		vcftools=config['VCFTOOLS'],
-		tmp=os.path.join(BASE_OUT,config.get("paths").get("tmp")),
-		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{vcf_name}_dp")
-	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-sampleDP.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-sampleDP.e"
-	threads: 1
-	resources:
-		mem_mb=5000
-	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_sampleDP.tsv"
-	envmodules:
-		"vcftools/0.1.16"
-	shell:
-		"""
-		{params.vcftools} --gzvcf {input.vcf} --depth --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
-		"""
 
 #Missing rate rule
 rule SampleMissingRate:
