@@ -8,7 +8,7 @@ rule sampleDP:
 	input:
 		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
-		MAIN_VCF_INPUT
+		vcf=MAIN_VCF_INPUT
 		# vcf=rules.cleanMissingHwe.output[0],
 		# vcf_index=rules.cleanMissingHwe.output[0]
 	params:
