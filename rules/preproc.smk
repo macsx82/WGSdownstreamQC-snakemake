@@ -27,18 +27,18 @@ rule getSamples:
 #Rule to apply a more stringen VQSLOD filter, if needed, to snps
 rule reapplyVQSRsnps:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRsnps").get("out_dir"), PROJECT_NAME + "_snps_VQSLODrefilter.vcf.gz"),
-		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRsnps").get("out_dir"), PROJECT_NAME + "_snps_VQSLODrefilter.vcf.gz.tbi")
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRsnps").get("out_dir"), "{vcf_name}_snps_VQSLODrefilter.vcf.gz"),
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRsnps").get("out_dir"), "{vcf_name}_snps_VQSLODrefilter.vcf.gz.tbi")
 	input:
 		MAIN_VCF_INPUT
 	params:
 		vqslod_thr=config.get("rules").get("reapplyVQSRsnps").get("VQSLOD_thr"),
 		bcftools_bin=config.get("BCFTOOLS")
 	log:
-		config["paths"]["log_dir"] + "/reapplyVQSRsnps.log",
-		config["paths"]["log_dir"] + "/reapplyVQSRsnps.e"
+		config["paths"]["log_dir"] + "/{vcf_name}-reapplyVQSRsnps.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-reapplyVQSRsnps.e"
 	benchmark:
-		config["paths"]["benchmark"] + "/reapplyVQSRsnps.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_reapplyVQSRsnps.tsv"
 	envmodules:
 		"bcftools/1.14"
 	resources:
@@ -53,18 +53,18 @@ rule reapplyVQSRsnps:
 #Rule to apply a more stringen VQSLOD filter, if needed, to indels
 rule reapplyVQSRindels:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRindels").get("out_dir"), PROJECT_NAME + "_indels_VQSLODrefilter.vcf.gz"),
-		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRindels").get("out_dir"), PROJECT_NAME + "_indels_VQSLODrefilter.vcf.gz.tbi")
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRindels").get("out_dir"), "{vcf_name}_indels_VQSLODrefilter.vcf.gz"),
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRindels").get("out_dir"), "{vcf_name}_indels_VQSLODrefilter.vcf.gz.tbi")
 	input:
 		MAIN_VCF_INPUT
 	params:
 		vqslod_thr=config.get("rules").get("reapplyVQSRindels").get("VQSLOD_thr"),
 		bcftools_bin=config.get("BCFTOOLS")
 	log:
-		config["paths"]["log_dir"] + "/reapplyVQSRindels.log",
-		config["paths"]["log_dir"] + "/reapplyVQSRindels.e"
+		config["paths"]["log_dir"] + "/{vcf_name}-reapplyVQSRindels.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-reapplyVQSRindels.e"
 	benchmark:
-		config["paths"]["benchmark"] + "/reapplyVQSRindels.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_reapplyVQSRindels.tsv"
 	envmodules:
 		"bcftools/1.14"
 	resources:
