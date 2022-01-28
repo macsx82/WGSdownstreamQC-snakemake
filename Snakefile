@@ -30,6 +30,7 @@ PROJECT_NAME=config["project_name"]
 #here we are defining outprefix as a list, since we want to parallelize everything and work by cromosome
 #We should be able to switch flawlessly from a chr based to a merged based pipeline,just modifying this parameter
 out_prefix=[PROJECT_NAME + "_" + chrom + "_MERGED" for chrom in chroms]
+out_prefix_autosomal=[PROJECT_NAME + "_" + chrom + "_MERGED" for chrom in autosomal]
 
 
 ### path to resources needed for plots
@@ -90,10 +91,10 @@ rule all:
         # expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateBySing_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort']),
         # expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByNRD_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort','seq']),
 
-        # #nrdr rules, to work only on AUTOSOMAL chromosomes
-        # expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDR.txt"), vcf_name=out_prefix, chrom=autosomal),
-        # expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDRsites.txt"), vcf_name=out_prefix, chrom=autosomal),
-        # expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_{chrom}_NRDRsamples.txt"), vcf_name=out_prefix, chrom=autosomal),
+        #nrdr rules, to work only on AUTOSOMAL chromosomes
+        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDR.txt"), vcf_name=out_prefix_autosomal),
+        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"), vcf_name=out_prefix_autosomal),
+        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt"), vcf_name=out_prefix_autosomal),
         # expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDR{subset}.txt"), vcf_name=out_prefix, subset=['samples','sites']),
         #stats
         expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_initial.stats"), vcf_name=out_prefix),
