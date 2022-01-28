@@ -135,23 +135,23 @@ rule getNRDbySiteAndSamples:
 		"""
 
 #3) Process the splitted information to calculate the complete tables per sample and per site
-# this is an aggregation rule, since we need a genome wide value for concordance and non reference discordance
+# this is an AGGREGATION rule, since we need a genome wide value for concordance and non reference discordance
 rule NRDbySample:
 	output:
-		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt"),
+		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{out_name}_NRDRsamples.txt"),
 	input:
 		# all_samples_NRD=expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{{vcf_name}}_{chr}_NRDRsamples.txt"), chr=autosomal)
-		all_samples_NRD=expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{{vcf_name}}_{chr}_NRDRsamples.txt"), chr=autosomal)
+		all_samples_NRD=expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt"), vcf_name=out_prefix_autosomal)
 	params:
 		bcftools=config['BCFTOOLS']
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySample.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySample.e"
+		config["paths"]["log_dir"] + "/{out_name}-NRDbySample.log",
+		config["paths"]["log_dir"] + "/{out_name}-NRDbySample.e"
 	threads: 1
 	resources:
 		mem_mb=5000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_NRDbySample.tsv"
+		config["paths"]["benchmark"] + "/{out_name}_NRDbySample.tsv"
 	run:
 		logger = logging.getLogger('logging_test')
 		fh = logging.FileHandler(str(log[1]))
@@ -170,17 +170,17 @@ rule NRDbySample:
 #simple rule to concat all chr NRD sites values and add a fla
 rule NRDbySite:
 	output:
-		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"),
+		os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{out_name}_NRDRsites.txt"),
 	input:
-		all_sites_NRD=expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{{vcf_name}}_{chr}_NRDRsites.txt"), chr=chroms)
+		all_sites_NRD=expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"), vcf_name=out_prefix_autosomal)
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySite.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-NRDbySite.e"
+		config["paths"]["log_dir"] + "/{out_name}-NRDbySite.log",
+		config["paths"]["log_dir"] + "/{out_name}-NRDbySite.e"
 	threads: 1
 	resources:
 		mem_mb=2000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_NRDbySite.tsv"
+		config["paths"]["benchmark"] + "/{out_name}_NRDbySite.tsv"
 	run:
 		logger = logging.getLogger('logging_test')
 		fh = logging.FileHandler(str(log[1]))
