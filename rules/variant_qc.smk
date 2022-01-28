@@ -111,7 +111,8 @@ rule VariantsHetRate:
 		{params.vcftools} --gzvcf {input.vcf} --hardy --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
 
-#het rate rule: get vcftools result and extract the het rate for plotting
+#rule to get the outliers variants to remove, based on the excess of heterozygosity pvalue calculated with vcftools
+# we set the exclusion threshold in the config file
 rule VariantsGetHetRateOut:
 	output:
 		os.path.join(BASE_OUT,config.get("rules").get("VariantsHetRate").get("out_dir"), "{vcf_name}_ToRemHetRate.txt")
