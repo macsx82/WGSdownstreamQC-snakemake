@@ -61,6 +61,33 @@ rule singletons:
 		{params.vcftools} --gzvcf {input.vcf} --singletons --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
 
+#aggregator rule for singleton data
+rule collectSingletons:
+	output:
+		# expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{{vcf_name}}_singletons.{ext}"), ext=["singletons", "log"])
+		os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{out_name}_singletons_ALL.singletons")
+	input:
+		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
+		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		sample_singletons=expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.singletons"),vcf_name=out_prefix)		
+	params:
+		bcftools=config['BCFTOOLS'],
+	log:
+		config["paths"]["log_dir"] + "/{out_name}-collectSingletons.log",
+		config["paths"]["log_dir"] + "/{out_name}-collectSingletons.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{out_name}_collectSingletons.tsv"
+	envmodules:
+		"vcftools/0.1.16"
+	shell:
+		"""
+		(echo -e "CHROM\tPOS\tSINGLETON/DOUBLETON\tALLELE\tINDV";cat {input.sample_singletons}| fgrep -v "DOUBLETON") > {output} 2> {log[1]}
+		"""
+
+
 # het rate rule: first get the data with vcftools
 rule SampleHetRate:
 	output:

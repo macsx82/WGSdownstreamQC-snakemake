@@ -71,7 +71,9 @@ rule all:
         #samples qc rules
         # expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons", "log"],vcf_name=out_prefix),
         expand(os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{out_name}_dp.{ext}"), ext=["idepth"],out_name=PROJECT_NAME),
-        expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons"],vcf_name=out_prefix),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{out_name}_singletons_ALL.singletons"),out_name=PROJECT_NAME),
+        # expand(os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{vcf_name}_singletons.{ext}"), ext=["singletons"],vcf_name=out_prefix),
+        # expand(os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{out_name}_dp.{ext}"), ext=["idepth"],out_name=PROJECT_NAME),
         # expand(os.path.join(BASE_OUT,config.get("rules").get("coverage").get("out_dir"), "{vcf_name}_dp.{ext}"), ext=["idepth", "log"],vcf_name=out_prefix),
         # expand(os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{vcf_name}_missing.{ext}"), ext=["imiss"],vcf_name=out_prefix),
         # # expand(os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{vcf_name}_missing.{ext}"), ext=["imiss", "log"],vcf_name=out_prefix),

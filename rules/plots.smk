@@ -75,7 +75,7 @@ rule SingCovPlot:
 		os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_SingCov.txt")
 	input:
 		sample_coverage=rules.sampleDP.output[0],
-		sample_singletons=rules.singletons.output[0]
+		sample_singletons=rules.collectSingletons.output[0]
 	params:
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-SingCovPlot.log",
