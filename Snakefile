@@ -26,7 +26,8 @@ MAIN_VCF_INPUT=config["paths"]["input_vcf"]
 chroms=config["chrs"]
 autosomal=[ x for x in config["chrs"] if x != "chrX" ]
 PROJECT_NAME=config["project_name"]
-out_prefix=PROJECT_NAME + "_MERGED"
+# out_prefix=PROJECT_NAME + "_MERGED"
+out_prefix=PROJECT_NAME
 
 
 ### path to resources needed for plots
@@ -50,7 +51,7 @@ include:
 rule all:
     input:
         #define target input for all first steps needed (basically, initial data filtering to perform other comparisons)
-        expand(os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz"), vcf_name=[out_prefix + "_" + chrom for chrom in chroms]),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz"), vcf_name=[out_prefix + "_" + chrom + "_MERGED" for chrom in chroms]),
 
         # expand(os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.{ext}"),vcf_name=out_prefix, ext=["vcf.gz", "vcf.gz.tbi", "removed.sites"]),
         # # expand(os.path.join(BASE_OUT, config.get('rules').get('VcfMultiClean').get('out_dir'), "{vcf_name}_SNPSMultiClean.{ext}"),vcf_name=out_prefix, ext=["vcf.gz", "vcf.gz.tbi"]),
