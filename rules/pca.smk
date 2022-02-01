@@ -56,7 +56,7 @@ rule CollectCleanPlinkFilesPCA:
 		"bcftools/1.14"
 	shell:
 		"""
-		cat {input} > {output.vcf_list}
+		echo "{input}"| tr " " "\n" > {output.vcf_list}
 		{params.bcftools} concat -f {output.vcf_list} -O z -o {output.vcf} 1> {log[0]} 2> {log[1]}
 		{params.plink} --vcf {output.vcf} --keep-allele-order --double-id --biallelic-only 'strict' --snps-only --autosome --make-bed --out {params.prefix} 1>> {log[0]} 2>> {log[1]}
 		"""
