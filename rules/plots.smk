@@ -244,24 +244,24 @@ rule PlotHetRateSampleNRD:
 #plot PCA
 rule kingPCAplot:
 	output:
-		plot_pca=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_pca.pdf"),
-		plot_pcaproj=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_pca_projection_on_1000GP.pdf")
+		plot_pca=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{out_name}_pca.pdf"),
+		plot_pcaproj=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{out_name}_pca_projection_on_1000GP.pdf")
 	input:
-		pc=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcapc.txt"),
-		proj_pc=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaprojpc.txt"),
-		proj_popref=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{vcf_name}_cleaned.LD0.3_kingpcaproj_popref.txt")
+		pc=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{out_name}_cleaned.LD0.3_kingpcapc.txt"),
+		proj_pc=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{out_name}_cleaned.LD0.3_kingpcaprojpc.txt"),
+		proj_popref=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{out_name}_cleaned.LD0.3_kingpcaproj_popref.txt")
 	params:
 		plot_dir=os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir")),
 		tgRefBed=config.get("paths").get("1000G_ref_for_king"),
 		scripts=config.get('paths').get('scripts')
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}_kingPCAplot.log",
-		config["paths"]["log_dir"] + "/{vcf_name}_kingPCAplot.e"
+		config["paths"]["log_dir"] + "/{out_name}_kingPCAplot.log",
+		config["paths"]["log_dir"] + "/{out_name}_kingPCAplot.e"
 	threads: 1
 	resources:
 		mem_mb=5000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_kingPCAplot.tsv"
+		config["paths"]["benchmark"] + "/{out_name}_kingPCAplot.tsv"
 	run:
 		logger = logging.getLogger('logging_test')
 		fh = logging.FileHandler(str(log[1]))
@@ -272,7 +272,7 @@ rule kingPCAplot:
 		try: 
 			logger.info('Starting operation!')
 			# do something
-			PCAplots(params.plot_dir,input.pc,input.proj_pc,input.proj_popref,wildcards.vcf_name)
+			PCAplots(params.plot_dir,input.pc,input.proj_pc,input.proj_popref,wildcards.out_name)
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
