@@ -87,15 +87,15 @@ rule all:
         # expand(os.path.join(BASE_OUT,config.get("rules").get("SampleROH").get("out_dir"), "{vcf_name}_{chrom}_roh.LROH"),vcf_name=out_prefix, chrom=chroms),
         # #plots
         expand(os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{out_name}_{ext}"),ext=["pca.pdf","pca_projection_on_1000GP.pdf"],out_name=PROJECT_NAME),
-        # expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af.png"),vcf_name=out_prefix, ref_pop=ref_pop),
-        # expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.pdf"),vcf_name=out_prefix, ref_pop=ref_pop),
-        # expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate.pdf"),vcf_name=out_prefix),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af.png"),vcf_name=out_prefix, ref_pop=ref_pop),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.pdf"),vcf_name=out_prefix, ref_pop=ref_pop),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{out_name}_hetRate.pdf"),out_name=PROJECT_NAME),
         # # expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_{chrom}_hetRate.pdf"),vcf_name=out_prefix, chrom=chroms),
-        # expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_SingCov.{ext}"),vcf_name=out_prefix,ext=["pdf","txt"]),
-        # expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByCov_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort']),
-        # expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByMiss_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort']),
-        # expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateBySing_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort']),
-        # expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{vcf_name}_hetRateByNRD_{group}.pdf"),vcf_name=out_prefix,group=['sex','cohort','seq']),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_SingCov.{ext}"),out_name=PROJECT_NAME,ext=["pdf","txt"]),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_hetRateByCov_{group}.pdf"),out_name=PROJECT_NAME,group=['sex','cohort']),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_hetRateByMiss_{group}.pdf"),out_name=PROJECT_NAME,group=['sex','cohort']),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_hetRateBySing_{group}.pdf"),out_name=PROJECT_NAME,group=['sex','cohort']),
+        expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_hetRateByNRD_{group}.pdf"),out_name=PROJECT_NAME,group=['sex','cohort','seq']),
 
         #nrdr rules, to work only on AUTOSOMAL chromosomes
         expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDR.txt"), vcf_name=out_prefix_autosomal),
