@@ -232,7 +232,7 @@ rule SampleMissingRate:
 #aggregator rule for missing rate data
 rule collectSampleMissingRate:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{out_name}_het_ALL.het")
+		os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{out_name}_missing_ALL.imiss")
 	input:
 		sample_miss=expand(os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{vcf_name}_missing.imiss"),vcf_name=out_prefix)		
 	log:
