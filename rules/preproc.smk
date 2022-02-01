@@ -84,8 +84,8 @@ rule mergeReapplyVQSR:
 	output:
 		# temp(os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_concatVQSLODrefilter.vcf.gz")),
 		# os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_concatVQSLODrefilter.vcf.gz"),
-		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{out_name}_{chrom}_MERGED_VQSLODrefilter.vcf.gz"),
-		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{out_name}_{chrom}_MERGED_VQSLODrefilter.vcf.gz.tbi")
+		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz"),
+		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz.tbi")
 	input:
 		vcf_snps=rules.reapplyVQSRsnps.output[0],
 		vcf_indels=rules.reapplyVQSRindels.output[0]
@@ -94,10 +94,10 @@ rule mergeReapplyVQSR:
 		tmp=config.get("paths").get("tmp"),
 		ref_genome=resolve_single_filepath(*references_abs_path(), config.get("genome_fasta"))
 	log:
-		config["paths"]["log_dir"] + "/{out_name}_{chrom}_MERGED-mergeReapplyVQSR.log",
-		config["paths"]["log_dir"] + "/{out_name}_{chrom}_MERGED-mergeReapplyVQSR.e"
+		config["paths"]["log_dir"] + "/{vcf_name}-mergeReapplyVQSR.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-mergeReapplyVQSR.e"
 	benchmark:
-		config["paths"]["benchmark"] + "/{out_name}_{chrom}_MERGED_mergeReapplyVQSR.tsv"
+		config["paths"]["benchmark"] + "/{vcf_name}_mergeReapplyVQSR.tsv"
 	envmodules:
 		"bcftools/1.14"
 	resources:
