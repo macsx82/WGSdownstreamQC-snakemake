@@ -91,7 +91,8 @@ rule collectSingletons:
 # het rate rule: first get the data with vcftools
 rule SampleHetRate:
 	output:
-		expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{{vcf_name}}_het.{ext}"), ext=["het"])
+		# expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{{vcf_name}}_het.{ext}"), ext=["het"])
+		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_het.het")
 	input:
 		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
 		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
@@ -116,6 +117,29 @@ rule SampleHetRate:
 		"""
 		{params.vcftools} --gzvcf {input.vcf} --het --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 		"""
+
+#aggregator rule for het rate data
+rule collectSampleHetRate:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("singletons").get("out_dir"), "{out_name}_het_ALL.het")
+	input:
+		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
+		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
+		sample_het=expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_het.het"),vcf_name=out_prefix)		
+	log:
+		config["paths"]["log_dir"] + "/{out_name}-collectSampleHetRate.log",
+		config["paths"]["log_dir"] + "/{out_name}-collectSampleHetRate.e"
+	threads: 1
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{out_name}_collectSampleHetRate.tsv"
+	shell:
+		"""
+		(echo -e "INDV\tO(HOM)\tE(HOM)\tN_SITES\tF";cat {input.sample_het}| fgrep -v "N_SITES") > {output} 2> {log[1]}
+		"""
+
+
 # #het rate rule: first get the data with vcftools
 # rule SampleHetRateChr:
 # 	output:
@@ -148,19 +172,19 @@ rule SampleHetRate:
 #het rate rule: get vcftools result and extract the het rate for plotting
 rule SampleGetHetRateOut:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_hetRate.txt")
+		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{out_name}_hetRate.txt")
 	input:
-		rules.SampleHetRate.output[0]
+		rules.collectSampleHetRate.output[0]
 	params:
 		vcftools=config['VCFTOOLS']
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-hetRate.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-hetRate.e"
+		config["paths"]["log_dir"] + "/{out_name}-hetRate.log",
+		config["paths"]["log_dir"] + "/{out_name}-hetRate.e"
 	threads: 1
 	resources:
 		mem_mb=5000
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_hetRate.tsv"
+		config["paths"]["benchmark"] + "/{out_name}_hetRate.tsv"
 	run:
 		logger = logging.getLogger('logging_test')
 		fh = logging.FileHandler(str(log[1]))
