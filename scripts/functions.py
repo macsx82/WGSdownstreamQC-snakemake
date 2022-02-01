@@ -218,7 +218,7 @@ def collectSampleHetRate(all_het, outfile):
 		# sample_nrd="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr1_NRDRsamples.txt"
 		current_het_sample=open(sample_het,'r')
 		for sample_line in current_het_sample:
-			if not(re.match("INDV",sample_line.strip()): 
+			if not(re.match("INDV",sample_line.strip())): 
 				#read all values by chr for the current sample
 				c_sample_line=sample_line.strip().split("\t")
 				#get the sample
