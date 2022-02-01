@@ -224,9 +224,9 @@ def collectSampleHetRate(all_het, outfile):
 				#get the sample
 				sample=c_sample_line[0]
 				#xRR+xRA+xAA
-				observed_h=c_sample_line[1]
-				expected_h=c_sample_line[2]
-				n_sites=c_sample_line[3]
+				observed_h=int(c_sample_line[1])
+				expected_h=float(c_sample_line[2])
+				n_sites=int(c_sample_line[3])
 				#xRR+xRA+xAA+mRA+mAA
 				samples_het_dict[sample]["observed_h"].append(observed_h)
 				samples_het_dict[sample]["expected_h"].append(expected_h)
