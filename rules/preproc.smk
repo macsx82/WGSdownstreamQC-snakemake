@@ -27,18 +27,19 @@ rule getSamples:
 #Rule to apply a more stringen VQSLOD filter, if needed, to snps
 rule reapplyVQSRsnps:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRsnps").get("out_dir"), "{vcf_name}_snps_VQSLODrefilter.vcf.gz"),
-		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRsnps").get("out_dir"), "{vcf_name}_snps_VQSLODrefilter.vcf.gz.tbi")
+		# expand(os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{out_name}_{chrom}_MERGED_VQSLODrefilter.vcf.gz"), out_name=PROJECT_NAME, chrom=chroms)
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRsnps").get("out_dir"), "{out_name}_{chrom}_MERGED_snps_VQSLODrefilter.vcf.gz"),
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRsnps").get("out_dir"), "{out_name}_{chrom}_MERGED_snps_VQSLODrefilter.vcf.gz.tbi")
 	input:
 		MAIN_VCF_INPUT
 	params:
 		vqslod_thr=config.get("rules").get("reapplyVQSRsnps").get("VQSLOD_thr"),
 		bcftools_bin=config.get("BCFTOOLS")
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-reapplyVQSRsnps.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-reapplyVQSRsnps.e"
+		config["paths"]["log_dir"] + "/{out_name}-{chrom}-reapplyVQSRsnps.log",
+		config["paths"]["log_dir"] + "/{out_name}-{chrom}-reapplyVQSRsnps.e"
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_reapplyVQSRsnps.tsv"
+		config["paths"]["benchmark"] + "/{out_name}_{chrom}_reapplyVQSRsnps.tsv"
 	envmodules:
 		"bcftools/1.14"
 	resources:
@@ -46,25 +47,25 @@ rule reapplyVQSRsnps:
 	message: """ Filter SNPs """
 	shell:
 		"""
-		{params.bcftools_bin} view -i 'VQSLOD >= {params.vqslod_thr}' -v snps {input} -O z -o {output[0]}
+		{params.bcftools_bin} view -r {wildcards.chrom} -i 'VQSLOD >= {params.vqslod_thr}' -v snps {input} -O z -o {output[0]}
 		{params.bcftools_bin} index -t {output[0]}
 		"""
 
 #Rule to apply a more stringen VQSLOD filter, if needed, to indels
 rule reapplyVQSRindels:
 	output:
-		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRindels").get("out_dir"), "{vcf_name}_indels_VQSLODrefilter.vcf.gz"),
-		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRindels").get("out_dir"), "{vcf_name}_indels_VQSLODrefilter.vcf.gz.tbi")
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRindels").get("out_dir"), "{out_name}_{chrom}_MERGED_indels_VQSLODrefilter.vcf.gz"),
+		os.path.join(BASE_OUT,config.get("rules").get("reapplyVQSRindels").get("out_dir"), "{out_name}_{chrom}_MERGED_indels_VQSLODrefilter.vcf.gz.tbi")
 	input:
 		MAIN_VCF_INPUT
 	params:
 		vqslod_thr=config.get("rules").get("reapplyVQSRindels").get("VQSLOD_thr"),
 		bcftools_bin=config.get("BCFTOOLS")
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-reapplyVQSRindels.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-reapplyVQSRindels.e"
+		config["paths"]["log_dir"] + "/{out_name}-{chrom}-reapplyVQSRindels.log",
+		config["paths"]["log_dir"] + "/{out_name}-{chrom}-reapplyVQSRindels.e"
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_reapplyVQSRindels.tsv"
+		config["paths"]["benchmark"] + "/{out_name}_{chrom}_reapplyVQSRindels.tsv"
 	envmodules:
 		"bcftools/1.14"
 	resources:
@@ -72,7 +73,7 @@ rule reapplyVQSRindels:
 	message: """ Filter INDELs """
 	shell:
 		"""
-		{params.bcftools_bin} view -i 'VQSLOD >= {params.vqslod_thr}' -v indels {input} -O z -o {output[0]}
+		{params.bcftools_bin} view -r {wildcards.chrom} -i 'VQSLOD >= {params.vqslod_thr}' -v indels {input} -O z -o {output[0]}
 		{params.bcftools_bin} index -t {output[0]}
 		"""
 
@@ -81,8 +82,8 @@ rule mergeReapplyVQSR:
 	output:
 		# temp(os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_concatVQSLODrefilter.vcf.gz")),
 		# os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_concatVQSLODrefilter.vcf.gz"),
-		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz"),
-		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{vcf_name}_VQSLODrefilter.vcf.gz.tbi")
+		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{out_name}_{chrom}_MERGED_VQSLODrefilter.vcf.gz"),
+		os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"), "{out_name}_{chrom}_MERGED_VQSLODrefilter.vcf.gz.tbi")
 	input:
 		vcf_snps=rules.reapplyVQSRsnps.output[0],
 		vcf_indels=rules.reapplyVQSRindels.output[0]
@@ -91,10 +92,10 @@ rule mergeReapplyVQSR:
 		tmp=config.get("paths").get("tmp"),
 		ref_genome=resolve_single_filepath(*references_abs_path(), config.get("genome_fasta"))
 	log:
-		config["paths"]["log_dir"] + "/{vcf_name}-mergeReapplyVQSR.log",
-		config["paths"]["log_dir"] + "/{vcf_name}-mergeReapplyVQSR.e"
+		config["paths"]["log_dir"] + "/{out_name}_{chrom}_MERGED-mergeReapplyVQSR.log",
+		config["paths"]["log_dir"] + "/{out_name}_{chrom}_MERGED-mergeReapplyVQSR.e"
 	benchmark:
-		config["paths"]["benchmark"] + "/{vcf_name}_mergeReapplyVQSR.tsv"
+		config["paths"]["benchmark"] + "/{out_name}_{chrom}_MERGED_mergeReapplyVQSR.tsv"
 	envmodules:
 		"bcftools/1.14"
 	resources:
