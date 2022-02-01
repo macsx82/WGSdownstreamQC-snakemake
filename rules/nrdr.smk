@@ -37,7 +37,8 @@ rule VcfArrayCommonSamples:
 		wgs_samples=rules.getSamples.output[0]
 		# rules.VcfMultiClean.output[0],
 	params:
-		bcftools=config['BCFTOOLS']
+		bcftools=config['BCFTOOLS'],
+		chrom = lambda wildcards: wildcards.vcf_name.replace(PROJECT_NAME,"").replace("MERGED","").replace("_","")
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-VcfArrayCommonSamples.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-VcfArrayCommonSamples.e"
@@ -50,7 +51,7 @@ rule VcfArrayCommonSamples:
 		"bcftools/1.14"
 	shell:
 		"""
-		({params.bcftools} view -S {input.wgs_samples} --force-samples -O z -o {output[0]} {input.snp_array}) 1> {log[0]} 2> {log[1]}
+		({params.bcftools} view -r {params.chrom} -S {input.wgs_samples} --force-samples -O z -o {output[0]} {input.snp_array}) 1> {log[0]} 2> {log[1]}
 		{params.bcftools} index -t {output[0]}
 		{params.bcftools} query -l {output[0]} > {output[2]}
 		"""
