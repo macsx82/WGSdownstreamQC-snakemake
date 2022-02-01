@@ -218,18 +218,19 @@ def collectSampleHetRate(all_het, outfile):
 		# sample_nrd="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr1_NRDRsamples.txt"
 		current_het_sample=open(sample_het,'r')
 		for sample_line in current_het_sample:
-			#read all values by chr for the current sample
-			c_sample_line=sample_line.strip().split("\t")
-			#get the sample
-			sample=c_sample_line[0]
-			#xRR+xRA+xAA
-			observed_h=c_sample_line[1]
-			expected_h=c_sample_line[2]
-			n_sites=c_sample_line[3]
-			#xRR+xRA+xAA+mRA+mAA
-			samples_het_dict[sample]["observed_h"].append(observed_h)
-			samples_het_dict[sample]["expected_h"].append(expected_h)
-			samples_het_dict[sample]["n_sites"].append(n_sites)
+			if not(re.match("INDV",sample_line.strip()): 
+				#read all values by chr for the current sample
+				c_sample_line=sample_line.strip().split("\t")
+				#get the sample
+				sample=c_sample_line[0]
+				#xRR+xRA+xAA
+				observed_h=c_sample_line[1]
+				expected_h=c_sample_line[2]
+				n_sites=c_sample_line[3]
+				#xRR+xRA+xAA+mRA+mAA
+				samples_het_dict[sample]["observed_h"].append(observed_h)
+				samples_het_dict[sample]["expected_h"].append(expected_h)
+				samples_het_dict[sample]["n_sites"].append(n_sites)
 	
 	her_dict={}
 	#now calculate the wg nrd for all samples and print all in the output file
