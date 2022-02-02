@@ -239,7 +239,7 @@ def collectSampleHetRate(all_het, outfile):
 	#now calculate the wg nrd for all samples and print all in the output file
 	for sample in samples_het_dict.keys():
 		het_dict[sample]=[sum(samples_het_dict[sample]["observed_h"]),sum(samples_het_dict[sample]["expected_h"]),sum(samples_het_dict[sample]["n_sites"])]
-		out_file_name.write("\t".join([sample,sum(samples_het_dict[sample]["observed_h"]),sum(samples_het_dict[sample]["expected_h"]),sum(samples_het_dict[sample]["n_sites"])]) + os.linesep)
+		out_file_name.write("\t".join([str(sample),str(sum(samples_het_dict[sample]["observed_h"])),str(sum(samples_het_dict[sample]["expected_h"])),str(sum(samples_het_dict[sample]["n_sites"]))]) + os.linesep)
 
 	out_file_name.close()
 	#we want to provide a flag for removal for the highest NRD samples (+5sd), so we need a pandas dataframe!!
