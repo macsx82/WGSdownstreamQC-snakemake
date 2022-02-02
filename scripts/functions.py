@@ -242,14 +242,40 @@ def collectSampleHetRate(all_het, outfile):
 		out_file_name.write("\t".join([str(sample),str(sum(samples_het_dict[sample]["observed_h"])),str(sum(samples_het_dict[sample]["expected_h"])),str(sum(samples_het_dict[sample]["n_sites"]))]) + os.linesep)
 
 	out_file_name.close()
-	#we want to provide a flag for removal for the highest NRD samples (+5sd), so we need a pandas dataframe!!
-	# het_df=pd.DataFrame(list(her_dict.items()))
-	# het_df.columns = ['INDV','O(HOM)','E(HOM)','N_SITES']
-	# # #get mean and sd
-	# # nrd_mean=nrd_df.NRD.mean()
-	# # nrd_sd=nrd_df.NRD.std()
-	# # # 4) upper threshold for samples flag
-	# # nrd_up = nrd_mean + 3 * nrd_sd
-	# # #now flag samples for exclusion if their het rate is outside the defined boundaries
-	# # nrd_df['nrd_rem']=nrd_df['NRD'].apply(lambda x: flag_record_remove(x, [nrd_up], 'gt'))
-	# het_df.to_csv(outfile,sep="\t", index=False, header=True, float_format="%.2f")
+
+
+#function to collect and merge missing rate data per sample splitted by chromosome
+def collectSampleMissingRate(all_miss, outfile):
+	# we have all files splitted by chr, we need to generate a dictionary for each sample and load the data we need
+	samples_miss_dict=collections.defaultdict(lambda: collections.defaultdict(list))
+	for sample_miss in all_miss:
+		# sample_nrd="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/04.nrdr/tables/WGS_ITA_PREREL_MERGED_chr1_NRDRsamples.txt"
+		current_mis_sample=open(sample_miss,'r')
+		for sample_line in current_mis_sample:
+			if not(re.match("INDV",sample_line.strip())): 
+				#read all values by chr for the current sample
+				c_sample_line=sample_line.strip().split("\t")
+				#get the sample
+				sample=c_sample_line[0]
+				n_data=int(c_sample_line[1])
+				n_gen_filt=int(c_sample_line[2])
+				n_miss=int(c_sample_line[3])
+				samples_miss_dict[sample]["n_data"].append(n_data)
+				samples_miss_dict[sample]["n_gen_filt"].append(n_gen_filt)
+				samples_miss_dict[sample]["n_miss"].append(n_miss)
+	
+	out_file_name=open(outfile,'w')
+	header_line="\t".join(["INDV","N_DATA","N_GENOTYPES_FILTERED","N_MISS","F_MISS"])
+	#write header line to file
+	out_file_name.write(header_line + os.linesep)
+
+	miss_dict={}
+	#now calculate the wg nrd for all samples and print all in the output file
+	for sample in samples_miss_dict.keys():
+		n_data=sum(samples_miss_dict[sample]["n_data"])
+		n_gen_filt=sum(samples_miss_dict[sample]["n_gen_filt"])
+		n_miss=sum(samples_miss_dict[sample]["n_miss"])
+		f_miss=float(n_miss/n_data)
+		out_file_name.write("\t".join([str(sample),str(n_data),str(n_gen_filt),str(n_miss),str(f_miss)]) + os.linesep)
+
+	out_file_name.close()

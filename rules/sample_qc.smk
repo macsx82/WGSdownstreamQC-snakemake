@@ -257,10 +257,24 @@ rule collectSampleMissingRate:
 		mem_mb=5000
 	benchmark:
 		config["paths"]["benchmark"] + "/{out_name}_collectSampleMissingRate.tsv"
-	shell:
-		"""
-		(echo -e "INDV\tN_DATA\tN_GENOTYPES_FILTERED\tN_MISS\tF_MISS";cat {input.sample_miss}| fgrep -v "N_MISS") > {output} 2> {log[1]}
-		"""
+	run:
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.DEBUG)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			collectSampleMissingRate(input.sample_miss,output[0])
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)		
+	# shell:
+	# 	"""
+	# 	(echo -e "INDV\tN_DATA\tN_GENOTYPES_FILTERED\tN_MISS\tF_MISS";cat {input.sample_miss}| fgrep -v "N_MISS") > {output} 2> {log[1]}
+	# 	"""
 
 
 #het rate rule: first get the data with vcftools
