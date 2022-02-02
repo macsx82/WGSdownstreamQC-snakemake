@@ -223,27 +223,33 @@ def collectSampleHetRate(all_het, outfile):
 				c_sample_line=sample_line.strip().split("\t")
 				#get the sample
 				sample=c_sample_line[0]
-				#xRR+xRA+xAA
 				observed_h=int(c_sample_line[1])
 				expected_h=float(c_sample_line[2])
 				n_sites=int(c_sample_line[3])
-				#xRR+xRA+xAA+mRA+mAA
 				samples_het_dict[sample]["observed_h"].append(observed_h)
 				samples_het_dict[sample]["expected_h"].append(expected_h)
 				samples_het_dict[sample]["n_sites"].append(n_sites)
 	
-	her_dict={}
+	out_file_name=open(outfile,'w')
+	header_line="\t".join(['INDV','O(HOM)','E(HOM)','N_SITES'])
+	#write header line to file
+	out_file_name.write(header_line + os.linesep)
+
+	het_dict={}
 	#now calculate the wg nrd for all samples and print all in the output file
 	for sample in samples_het_dict.keys():
-		her_dict[sample]=[sum(samples_het_dict[sample]["observed_h"]),sum(samples_het_dict[sample]["expected_h"]),sum(samples_het_dict[sample]["n_sites"])]
+		het_dict[sample]=[sum(samples_het_dict[sample]["observed_h"]),sum(samples_het_dict[sample]["expected_h"]),sum(samples_het_dict[sample]["n_sites"])]
+		out_file_name.write("\t".join([sample,sum(samples_het_dict[sample]["observed_h"]),sum(samples_het_dict[sample]["expected_h"]),sum(samples_het_dict[sample]["n_sites"])]) + os.linesep)
+
+	out_file_name.close()
 	#we want to provide a flag for removal for the highest NRD samples (+5sd), so we need a pandas dataframe!!
-	het_df=pd.DataFrame(list(her_dict.items()))
-	het_df.columns = ['INDV','O(HOM)','E(HOM)','N_SITES']
-	# #get mean and sd
-	# nrd_mean=nrd_df.NRD.mean()
-	# nrd_sd=nrd_df.NRD.std()
-	# # 4) upper threshold for samples flag
-	# nrd_up = nrd_mean + 3 * nrd_sd
-	# #now flag samples for exclusion if their het rate is outside the defined boundaries
-	# nrd_df['nrd_rem']=nrd_df['NRD'].apply(lambda x: flag_record_remove(x, [nrd_up], 'gt'))
-	het_df.to_csv(outfile,sep="\t", index=False, header=True, float_format="%.6f")
+	# het_df=pd.DataFrame(list(her_dict.items()))
+	# het_df.columns = ['INDV','O(HOM)','E(HOM)','N_SITES']
+	# # #get mean and sd
+	# # nrd_mean=nrd_df.NRD.mean()
+	# # nrd_sd=nrd_df.NRD.std()
+	# # # 4) upper threshold for samples flag
+	# # nrd_up = nrd_mean + 3 * nrd_sd
+	# # #now flag samples for exclusion if their het rate is outside the defined boundaries
+	# # nrd_df['nrd_rem']=nrd_df['NRD'].apply(lambda x: flag_record_remove(x, [nrd_up], 'gt'))
+	# het_df.to_csv(outfile,sep="\t", index=False, header=True, float_format="%.2f")
