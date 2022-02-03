@@ -124,7 +124,7 @@ def af_diff(wgs_table, ext_table, outfile, outplot,outplot_extreme):
 	matplotlib.use('Agg')
 	# define the column header
 	col_head=['var_key','CHROM','POS','ID','REF','ALT','AC','AN','AF','MAF']
-	# wgs_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220105/01.VQSR_reapply/test_snps.tab"
+	# wgs_table="/large/___SCRATCH___/burlo/cocca/WGS_JOINT_CALL/WGS_QC_pre_release/20220201/02.sites/popAF/WGS_ITA_PREREL_chr20_MERGED_af.txt"
 	# ext_table="/storage/burlo/cocca/resources/1000GP_phase3_3202/vcf/EUR/EUR_normIndel_multiSplitted.vcf.gz.tab"
 	wgs_df = pd.read_table(wgs_table,sep="\t", header=None,names=col_head)
 	ext_df = pd.read_table(ext_table,sep="\t", header=None,names=col_head)
@@ -132,8 +132,17 @@ def af_diff(wgs_table, ext_table, outfile, outplot,outplot_extreme):
 	merged_df = wgs_df.merge(ext_df, how='inner',on='var_key')
 	#calculate the af difference
 	merged_df['af_diff'] = abs(merged_df['AF_x'] - merged_df['AF_y'])
+	# merged_df['af_fold'] = np.log(merged_df['AF_x'] / merged_df['AF_y'])
 	#get the threshold value for the 99 percentile, which should contain the most differentiated snps in terms of AF
-	extreme_af_diff_thr=merged_df['af_diff'].quantile(0.99)
+	# extreme_af_diff_thr=merged_df['af_diff'].quantile(0.999)
+	# extreme_af_diff_thr=merged_df['af_diff'].mean() + 6 * merged_df['af_diff'].std()
+	extreme_af_diff_thr=0.3
+	# plt.hist(merged_df['af_diff'], color = 'blue',edgecolor='black', bins=20)
+	# plt.axvline(x=up_thr, color='red',dashes=(3,2,1,2))
+	# plt.xlabel("AF differences bin")
+	# plt.ylabel("Count")
+	# plt.savefig(outplot_af_diff_dist)
+	# plt.savefig('test.pdf')
 	#now find all variants with the highest differences
 	extreme_diff_variants_df=merged_df[merged_df['af_diff'] >= extreme_af_diff_thr]
 	#now write the resulting table with the highest diff AF
