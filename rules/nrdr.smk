@@ -196,3 +196,68 @@ rule NRDbySite:
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
+
+
+###################################################
+#extract AF from the snp array study population data
+rule getArrayPopAF:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("getArrayPopAF").get("out_dir"), "{vcf_name}_af_array.txt"),
+		os.path.join(BASE_OUT,config.get("rules").get("getArrayPopAF").get("out_dir"), "{vcf_name}_af_wgs.txt")
+	input:
+		snp_array=rules.VcfArrayCommonSamples.output[0],
+		vcf=rules.VcfWgsArrayCommon.output[0],
+		vcf_index=rules.VcfWgsArrayCommon.output[1],
+		samples=rules.VcfArrayCommonSamples.output[2]
+	params:
+		bcftools=config['BCFTOOLS']
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-getArrayPopAF.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-getArrayPopAF.e"
+	threads: 2
+	resources:
+		mem_mb=5000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_getArrayPopAF.tsv"
+	envmodules:
+		"bcftools/1.14"
+	shell:
+		"""
+		({params.bcftools} +fill-tags {input.snp_array} -- -t all | {params.bcftools} query -f "%CHROM\_%POS\_%REF\_%ALT\t%CHROM\t%POS\t%ID\t%REF\t%ALT\t%AC\t%AN\t%AF\t%MAF\n" -o {output[0]}) 1> {log[0]} 2> {log[1]}
+		({params.bcftools} +fill-tags {input.vcf} -- -t all | {params.bcftools} query -f "%CHROM\_%POS\_%REF\_%ALT\t%CHROM\t%POS\t%ID\t%REF\t%ALT\t%AC\t%AN\t%AF\t%MAF\n" -o {output[1]}) 1> {log[0]} 2> {log[1]}
+		"""
+
+#merge pop data with data from SNP array, using the provided data
+rule comparePopAFArray:
+	output:
+		os.path.join(BASE_OUT,config.get("rules").get("getArrayPopAF").get("out_dir"), "{vcf_name}_ARRAY_af_extrDiff.txt"),
+		os.path.join(BASE_OUT,config.get("rules").get("getArrayPopAF").get("out_dir"), "{vcf_name}_ARRAY_af.png"),
+		os.path.join(BASE_OUT,config.get("rules").get("getArrayPopAF").get("out_dir"), "{vcf_name}_ARRAY_af_extrDiff.pdf")
+	input:
+		array_table=rules.getArrayPopAF.output[0]
+		wgs_table=rules.getArrayPopAF.output[1]
+	params:
+		# ext_table=lambda wildcards: config.get("rules").get("comparePopAF").get("ref_pops").get(wildcards.ref_pop),
+		# out_prefix=os.path.join(BASE_OUT,config.get("rules").get("comparePopAFArray").get("out_dir"))
+	log:
+		config["paths"]["log_dir"] + "/{vcf_name}-comparePopAFArray.log",
+		config["paths"]["log_dir"] + "/{vcf_name}-comparePopAFArray.e"
+	threads: 1
+	resources:
+		mem_mb=10000
+	benchmark:
+		config["paths"]["benchmark"] + "/{vcf_name}_comparePopAFArray.tsv"
+	run:
+		logger = logging.getLogger('logging_test')
+		fh = logging.FileHandler(str(log[1]))
+		fh.setLevel(logging.INFO)
+		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+		fh.setFormatter(formatter)
+		logger.addHandler(fh)
+		try: 
+			logger.info('Starting operation!')
+			# do something
+			af_diff(input.wgs_table, input.array_table, output[0], output[1],output[2])
+			logger.info('Ended!')
+		except Exception as e: 
+			logger.error(e, exc_info=True)

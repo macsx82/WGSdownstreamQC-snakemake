@@ -49,6 +49,8 @@ rules:
     out_dir: "02.sites/MissingRate"
   getPopAF:
     out_dir: "02.sites/popAF"
+  getArrayPopAF:
+    out_dir: "02.sites/arrayAF"
   comparePopAF:
     ref_pops:
       1000G_subpop: "/storage/burlo/cocca/resources/1000GP_phase3_3202/vcf/EUR/EUR_normIndel_multiSplitted.vcf.gz.tab" #full path of the file containing AF information for fomparison with the study population. This file should be defined according to the main ancestri represented in your population
