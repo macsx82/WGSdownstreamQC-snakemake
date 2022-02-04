@@ -234,7 +234,7 @@ rule comparePopAFArray:
 		os.path.join(BASE_OUT,config.get("rules").get("getArrayPopAF").get("out_dir"), "{vcf_name}_ARRAY_af.png"),
 		os.path.join(BASE_OUT,config.get("rules").get("getArrayPopAF").get("out_dir"), "{vcf_name}_ARRAY_af_extrDiff.pdf")
 	input:
-		array_table=rules.getArrayPopAF.output[0]
+		array_table=rules.getArrayPopAF.output[0],
 		wgs_table=rules.getArrayPopAF.output[1]
 	params:
 		# ext_table=lambda wildcards: config.get("rules").get("comparePopAF").get("ref_pops").get(wildcards.ref_pop),
