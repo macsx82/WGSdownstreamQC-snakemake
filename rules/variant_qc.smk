@@ -15,7 +15,7 @@ rule cleanMissingHwe:
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHwe.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHwe.e"
-	threads: 2
+	threads: 3
 	resources:
 		mem_mb=5000
 	benchmark:
@@ -24,38 +24,10 @@ rule cleanMissingHwe:
 		"bcftools/1.14"
 	shell:
 		"""
-		({params.bcftools} +fill-tags {input.vcf} -- -t all,F_MISSING,HWE | bcftools view -e "HWE < {params.hwe_thr} | F_MISSING > {params.missing_thr}" -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
+		({params.bcftools} +fill-tags {input.vcf} -- -t all,F_MISSING,HWE | {params.bcftools} view -e "HWE < {params.hwe_thr}"| {params.bcftools} view -e "F_MISSING > {params.missing_thr}" -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
 		{params.bcftools} index -t {output[0]} 1>> {log[0]} 2>> {log[1]}
 		"""
 
-# rule cleanMissingHwe:
-# 	output:
-# 		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz"),
-# 		os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.vcf.gz.tbi"),
-# 	input:
-# 		vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}_VQSLODrefilter.vcf.gz"),
-# 		vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}_VQSLODrefilter.vcf.gz.tbi")
-# 	params:
-# 		bcftools=config['BCFTOOLS'],
-# 		hwe_thr=config.get("rules").get("cleanMissingHwe").get("hwe_thr"),
-# 		missing_thr=config.get("rules").get("cleanMissingHwe").get("missing_thr"),
-# 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call")
-# 	log:
-# 		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHwe.log",
-# 		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHwe.e"
-# 	threads: 2
-# 	resources:
-# 		mem_mb=5000
-# 	benchmark:
-# 		config["paths"]["benchmark"] + "/{vcf_name}_cleanMissingHwe.tsv"
-# 	envmodules:
-# 		"vcftools/0.1.16",
-# 		"bcftools/1.14"
-# 	shell:
-# 		"""
-# 		({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --recode --recode-INFO-all -c | {params.bcftools} view -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
-# 		{params.bcftools} index -t {output[0]} 1>> {log[0]} 2>> {log[1]}
-# 		"""
 
 rule cleanMissingHweList:
 	output:
@@ -80,9 +52,8 @@ rule cleanMissingHweList:
 		"bcftools/1.14"
 	shell:
 		"""
-		({params.bcftools} +fill-tags {input.vcf} -- -t all,F_MISSING,HWE | {params.bcftools} view -i "HWE < {params.hwe_thr} | F_MISSING > {params.missing_thr}" | {params.bcftools} view -G -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
+		({params.bcftools} +fill-tags {input.vcf} -- -t all,F_MISSING,HWE | {params.bcftools} view -e "HWE < {params.hwe_thr}"| {params.bcftools} view -G -e "F_MISSING > {params.missing_thr}" -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
 		"""
-		#({params.vcftools} --gzvcf {input.vcf} --hwe {params.hwe_thr} --max-missing {params.missing_thr} --removed-sites --out {params.out_prefix}) 1> {log[0]} 2> {log[1]}
 
 
 # 2) set of rules to calculate het rate and missing rate lists to be used as summary data and removal lists
@@ -105,10 +76,10 @@ rule VariantsHetRate:
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_hwe.tsv"
 	envmodules:
-		"vcftools/0.1.16"
+		"bcftools/1.14"
 	shell:
 		"""
-		{params.vcftools} --gzvcf {input.vcf} --hardy --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
+		(echo -e "CHROM\tPOS\tID\tREF\tALT\tP_HET_EXCESS";{params.bcftools} +fill-tags {input.vcf} -- -t all,ExcHet | {params.bcftools} query -f "%CHROM\t%POS\t%ID\t%REF\t%ALT\t%INFO/ExcHet\n") > {output[0]} 1> {log[0]} 2> {log[1]}
 		"""
 
 #rule to get the outliers variants to remove, based on the excess of heterozygosity pvalue calculated with vcftools
@@ -165,11 +136,13 @@ rule VariantsMissingRate:
 	benchmark:
 		config["paths"]["benchmark"] + "/{vcf_name}_variantsMissing.tsv"
 	envmodules:
-		"vcftools/0.1.16"
+		"bcftools/1.14"
 	shell:
 		"""
-		{params.vcftools} --gzvcf {input.vcf} --missing-site --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
+		samples_n=$({params.bcftools} query -l {input.vcf})
+		(echo -e "CHR\tPOS\tID\tREF\tALT\tF_MISS\tN_MISS\tN_DATA";{params.bcftools} +fill-tags {input.vcf} -- -t all,NS,F_MISSING | {params.bcftools} query -f "%CHROM\t%POS\t%ID\t%REF\t%ALT\t%INFO/F_MISSING\t%INFO/AN\n"| awk -v snum=${{samples_n}} '{FS="\t";OFS="\t"}{print $1,$2,$3,$4,$5,$6,snum*2-$7,snum*2}') > {output[0]} 1> {log[0]} 2> {log[1]}
 		"""
+		# {params.vcftools} --gzvcf {input.vcf} --missing-site --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 
 #extract AF from the  study population data
 rule getPopAF:
