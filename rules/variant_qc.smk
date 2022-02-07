@@ -65,7 +65,7 @@ rule VariantsHetRate:
 		vcf=rules.cleanMissingHwe.output[0],
 		vcf_index=rules.cleanMissingHwe.output[1]
 	params:
-		vcftools=config['VCFTOOLS'],
+		bcftools=config['BCFTOOLS'],
 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("VariantsHetRate").get("out_dir"), "{vcf_name}_hwe")
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-hwe.log",
