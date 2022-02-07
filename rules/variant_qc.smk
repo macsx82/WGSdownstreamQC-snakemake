@@ -140,7 +140,7 @@ rule VariantsMissingRate:
 	shell:
 		"""
 		samples_n=$({params.bcftools} query -l {input.vcf})
-		(echo -e "CHR\tPOS\tID\tREF\tALT\tF_MISS\tN_MISS\tN_DATA";{params.bcftools} +fill-tags {input.vcf} -- -t all,NS,F_MISSING | {params.bcftools} query -f "%CHROM\t%POS\t%ID\t%REF\t%ALT\t%INFO/F_MISSING\t%INFO/AN\n"| awk -v snum=${{samples_n}} '{FS="\t";OFS="\t"}{print $1,$2,$3,$4,$5,$6,snum*2-$7,snum*2}') > {output[0]} 1> {log[0]} 2> {log[1]}
+		(echo -e "CHR\tPOS\tID\tREF\tALT\tF_MISS\tN_MISS\tN_DATA";{params.bcftools} +fill-tags {input.vcf} -- -t all,NS,F_MISSING | {params.bcftools} query -f "%CHROM\t%POS\t%ID\t%REF\t%ALT\t%INFO/F_MISSING\t%INFO/AN\n"| awk -v snum=${{samples_n}} '{{FS="\t";OFS="\t"}}{{print $1,$2,$3,$4,$5,$6,snum*2-$7,snum*2}}') > {output[0]} 1> {log[0]} 2> {log[1]}
 		"""
 		# {params.vcftools} --gzvcf {input.vcf} --missing-site --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
 
