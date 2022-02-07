@@ -38,12 +38,12 @@ rule cleanMissingHweList:
 	params:
 		bcftools=config['BCFTOOLS'],
 		hwe_thr=config.get("rules").get("cleanMissingHwe").get("hwe_thr"),
-		missing_thr=config.get("rules").get("cleanMissingHwe").get("missing_thr"),
+		missing_thr=config.get("rules").get("cleanMissingHwe").get("missing_thr")
 		# out_prefix=os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call")
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHweList.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-cleanMissingHweList.e"
-	threads: 1
+	threads: 3
 	resources:
 		mem_mb=5000
 	benchmark:
@@ -70,7 +70,7 @@ rule VariantsHetRate:
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-hwe.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-hwe.e"
-	threads: 1
+	threads: 2
 	resources:
 		mem_mb=5000
 	benchmark:
@@ -130,7 +130,7 @@ rule VariantsMissingRate:
 	log:
 		config["paths"]["log_dir"] + "/{vcf_name}-variantsMissing.log",
 		config["paths"]["log_dir"] + "/{vcf_name}-variantsMissing.e"
-	threads: 1
+	threads: 3
 	resources:
 		mem_mb=5000
 	benchmark:
