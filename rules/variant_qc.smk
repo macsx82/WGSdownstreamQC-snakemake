@@ -52,7 +52,7 @@ rule cleanMissingHweList:
 		"bcftools/1.14"
 	shell:
 		"""
-		({params.bcftools} +fill-tags {input.vcf} -- -t all,F_MISSING,HWE | {params.bcftools} view -e "HWE < {params.hwe_thr}"| {params.bcftools} view -G -e "F_MISSING > {params.missing_thr}" -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
+		({params.bcftools} +fill-tags {input.vcf} -- -t all,F_MISSING,HWE | {params.bcftools} view -i "HWE <= {params.hwe_thr}"| {params.bcftools} view -G -e "F_MISSING >= {params.missing_thr}" -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
 		"""
 
 
