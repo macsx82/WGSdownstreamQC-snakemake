@@ -52,8 +52,9 @@ rule cleanMissingHweList:
 		"bcftools/1.14"
 	shell:
 		"""
-		({params.bcftools} +fill-tags {input.vcf} -- -t all,F_MISSING,HWE | {params.bcftools} view -i "HWE <= {params.hwe_thr}"| {params.bcftools} view -G -i "F_MISSING >= {params.missing_thr}" -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
+		({params.bcftools} +fill-tags {input.vcf} -- -t all,F_MISSING,HWE | {params.bcftools} view -i "HWE <= {params.hwe_thr} | F_MISSING >= {params.missing_thr}" -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
 		"""
+		# ({params.bcftools} +fill-tags {input.vcf} -- -t all,F_MISSING,HWE | {params.bcftools} view -i "HWE <= {params.hwe_thr}"| {params.bcftools} view -G -i "F_MISSING >= {params.missing_thr}" -O z -o {output[0]}) 1> {log[0]} 2> {log[1]}
 
 
 # 2) set of rules to calculate het rate and missing rate lists to be used as summary data and removal lists
