@@ -101,7 +101,6 @@ else :
         input:
             #define target input for all first steps needed (basically, initial data filtering to perform other comparisons)
             expand(os.path.join(BASE_OUT,config.get("rules").get("cleanMissingHwe").get("out_dir"), "{vcf_name}_HWE95call.{ext}"),vcf_name=out_prefix, ext=["vcf.gz", "vcf.gz.tbi", "removed.sites.vcf.gz"]),
-            expand(os.path.join(BASE_OUT, config.get('rules').get('VcfMultiClean').get('out_dir'), "{vcf_name}_VcfWgsArrayCommon.{ext}"),vcf_name=out_prefix, ext=["vcf.gz", "vcf.gz.tbi"]),
             #variants qc rules
             expand(os.path.join(BASE_OUT,config.get("rules").get("VariantsMissingRate").get("out_dir"), "{vcf_name}_missing.{ext}"), ext=["lmiss"],vcf_name=out_prefix),
             expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.txt"),vcf_name=out_prefix,ref_pop=ref_pop),
