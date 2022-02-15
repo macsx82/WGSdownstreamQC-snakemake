@@ -1,7 +1,8 @@
 #Config file template for WGS downstream QC pipeline
 project_name: "project name" #name of the project to be used also as suffix for file naming
 
-#################################################################################
+
+################### REFERENCES  #####################################
 #paths and subfolders containing data we need for the pipeline to run
 references:
   basepath: "/storage/burlo/cocca/resources"
@@ -11,23 +12,17 @@ references:
 genome_fasta: "GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna"
 #################################################################################
 
-#We suppose we need to concat or split different chromosomes, so we need to define alist of chromosomes to concat.
-#by default, chrY is omitted, since it is only available for MALES samples
-#also by default, we consider chrX PAR and NON PAR regions together
+#################################################################################
+# Subset of chromosomes to work on.
+# We suppose we need to concat or split different chromosomes, so we need to define alist of chromosomes to concat.
+# by default, chrY is omitted, since it is only available for MALES samples
+# also by default, we consider chrX PAR and NON PAR regions together, as chrX
 chrs: ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10","chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19","chr20","chr21","chr22","chrX"]
 
+#################################################################################
 
-paths:
-  input_vcf: "input_file_folder" #path for the input files to be QC-ed. It should contain a single file with all samples and chromosomes
-  base_out: "base_output_folder" #base folder for the output
-  log_dir: "" #base path for log folder
-  benchmark: "" #base path for benchmark folder
-  tmp: "" #base path for tmp folder
-  manifest_table: "" #sex table formatted with spaces as separator, and "SAMPLES_ID sex" as header. Sex should be coded as 1=Male, 2=Female
-  1000G_ref_for_king: "" #files reference for king pca projection
-  snp_array_data: "" #path and prefix for the snp array data to be used for NRDR calculations 
-
-##### Rules specific options #####
+#################### RULES PARAMETERS ################################
+# parameters for different tools in different rules
 rules:
   reapplyVQSRsnps:
     VQSLOD_thr: "VQSLOD new threshold" #define the new threshold vor vqslod filtering
@@ -53,7 +48,7 @@ rules:
     out_dir: "02.sites/arrayAF"
   comparePopAF:
     ref_pops:
-      1000G_subpop: "/storage/burlo/cocca/resources/1000GP_phase3_3202/vcf/EUR/EUR_normIndel_multiSplitted.vcf.gz.tab" #full path of the file containing AF information for fomparison with the study population. This file should be defined according to the main ancestri represented in your population
+      1000G_subpop: "/storage/burlo/cocca/resources/1000GP_phase3_3202/vcf/EUR/EUR_normIndel_multiSplitted.vcf.gz.tab" #full path of the file containing AF information for fomparison with the study population. This file should be defined according to the main ancestry represented in your population
       TGP2504: "/storage/burlo/cocca/resources/1000GP_phase3_3202/vcf/TGP_2504/TGP2504_normIndel_multiSplitted.vcf.gz.tab" #full path of the file containing AF information for fomparison with the study population
     out_dir: "02.sites/popAF"
   getSamples:
@@ -79,6 +74,17 @@ rules:
   stats:
     out_dir: "05.stats"
 
+################ PATHS #################
+### - INPUT and OUTPUT FILES PATHS - ###
+paths:
+  input_vcf: "input_file_folder" #path for the input files to be QC-ed. It should contain a single file with all samples and chromosomes
+  base_out: "base_output_folder" #base folder for the output
+  log_dir: "" #base path for log folder
+  benchmark: "" #base path for benchmark folder
+  tmp: "" #base path for tmp folder
+  manifest_table: "" #sex table formatted with spaces as separator, and "SAMPLES_ID COHORT sex SEQ" as header. Sex should be coded as 1=Male, 2=Female
+  1000G_ref_for_king: "/storage/burlo/cocca/resources/1000GP_phase3/king/KGref.bed" #files reference for king pca projection
+  snp_array_data: "" #path and prefix for the snp array data to be used for NRDR calculations . Set to FALSE if no other data is available for any sample in the callset.
 
 ### - PATH TOOL - ###
 SAMBAMBA_TOOL: "sambamba"

@@ -96,13 +96,14 @@ rule all:
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_hetRateByCov_{group}.pdf"),out_name=PROJECT_NAME,group=['sex','cohort']),
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_hetRateByMiss_{group}.pdf"),out_name=PROJECT_NAME,group=['sex','cohort']),
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_hetRateBySing_{group}.pdf"),out_name=PROJECT_NAME,group=['sex','cohort']),
-        expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_hetRateByNRD_{group}.pdf"),out_name=PROJECT_NAME,group=['sex','cohort','seq']),
 
-        #nrdr rules, to work only on AUTOSOMAL chromosomes
-        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDR.txt"), vcf_name=out_prefix_autosomal),
-        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"), vcf_name=out_prefix_autosomal),
-        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt"), vcf_name=out_prefix_autosomal),
-        expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{out_name}_NRDR{subset}.txt"), out_name=PROJECT_NAME, subset=['samples','sites']),
+        #nrdr rules and plots, to work only on AUTOSOMAL chromosomes
+        if config.get("paths").get("snp_array_data") != "FALSE" :
+            expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDR.txt"), vcf_name=out_prefix_autosomal),
+            expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"), vcf_name=out_prefix_autosomal),
+            expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt"), vcf_name=out_prefix_autosomal),
+            expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{out_name}_NRDR{subset}.txt"), out_name=PROJECT_NAME, subset=['samples','sites']),
+            expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_hetRateByNRD_{group}.pdf"),out_name=PROJECT_NAME,group=['sex','cohort','seq']),
 
         expand(os.path.join(BASE_OUT,config.get("rules").get("getArrayPopAF").get("out_dir"), "{vcf_name}_ARRAY_af_extrDiff.txt"), vcf_name=out_prefix_autosomal),
         expand(os.path.join(BASE_OUT,config.get("rules").get("getArrayPopAF").get("out_dir"), "{vcf_name}_ARRAY_af.png"), vcf_name=out_prefix_autosomal),
@@ -122,8 +123,11 @@ include:
     include_prefix + "/vcf_stats.smk"
 include:
     include_prefix + "/sample_qc.smk"
-include:
-    include_prefix + "/nrdr.smk"
+
+if config.get("paths").get("snp_array_data") != "FALSE" :
+    include:
+        include_prefix + "/nrdr.smk"
+
 include:
     include_prefix + "/plots.smk"
 

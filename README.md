@@ -4,6 +4,7 @@ The pipeline will perform some QC steps on a complete WGS dataset, on both varia
 
 Variant related QC and metrics:
 
+- [x] VQSR reapply
 - [x] HWE
 - [x] Heterozygosity rate
 - [x] Call rate
@@ -12,7 +13,7 @@ Variant related QC and metrics:
 For a subset of individuals (all the INGI-FVG samples) also the following information were extracted:
 
 - [x] Allele Frequency comparison with available snp array data
-- [x] Non Reference Discordance comparison with available snp array data
+- [x] Non Reference Discordance (NRD) comparison with available snp array data
 
 
 Sample related:
@@ -123,3 +124,66 @@ In order to run the pipeline, the following python packages have to be installed
     ```
 ---
 
+## Resources set up
+
+In order to run the pipeline, some resources have to be available on you cluster/environment.
+
+### Genome reference
+
+At the moment, all resources needed are already available on the APOLLO cluster, at the following locations:
+
+```
+################### REFERENCES  #####################################
+#paths and subfolders containing data we need for the pipeline to run
+references:
+  basepath: "/shared/resources"
+  provider: "hgRef"
+  release: "GRCh38.p13"
+
+genome_fasta: "GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna"
+```
+
+### Outbred population references
+
+In order to perform allele frequency comparison with external populations, two resources are required, and their path has to be specified in the comparePopAF block of the config file:
+
+```
+1000G_subpop: "/storage/burlo/cocca/resources/1000GP_phase3_3202/vcf/EUR/EUR_normIndel_multiSplitted.vcf.gz.tab" #full path of the file containing AF information for fomparison with the study population. This file should be defined according to the main ancestry represented in your population
+TGP2504: "/storage/burlo/cocca/resources/1000GP_phase3_3202/vcf/TGP_2504/TGP2504_normIndel_multiSplitted.vcf.gz.tab" #full path of the file containing AF information for fomparison with the study population
+```
+
+The examples provided here refers to resources available on the ORFEO cluster. The main path for resources on the Apoloo cluster is:
+
+```
+/shared/resources
+```
+
+### PCA resources
+
+PCA analyses is performed using the [King software](https://www.kingrelatedness.com/) . In roder to perform the analyses, the user need to define the correct resource path using the parameter **1000G_ref_for_king** in the config file.
+
+The default value below is set to work on the ORFEO cluster
+
+```
+1000G_ref_for_king: "/storage/burlo/cocca/resources/1000GP_phase3/king/KGref.bed" 
+```
+
+### SNP array data
+
+In order to perform Non Reference Discordance calculation, the user need to provide the pipeline a VCF file, previously formatted (correct genome reference build, correct REF/ALT alignment).
+The absolute path to this file has to be provided with the parameter **snp_array_data** in the **path** block of the config file.
+
+This comparison is useful to detect sample contamination and genotyping errors, by comparison with a more trusted dataset. So it is advisable to perform the comparison even if other genetic data is available only for a subset of samples.
+In case no other data is available for any sample in the current callset, the parameter in the config file should be set to **"FALSE"**, in order to disable this comparison.
+
+
+### Other requirements
+
+Manifest file following the template provided in the **resource** folder, space separated and with the header line:
+
+```
+SAMPLE_ID COHORT sex SEQ
+
+```
+
+The absolute path of this file has to be specified with the parameter **"manifest_table"** of the config file.
