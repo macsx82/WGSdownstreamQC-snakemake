@@ -148,40 +148,8 @@ rule collectSampleHetRate:
 			logger.info('Ended!')
 		except Exception as e: 
 			logger.error(e, exc_info=True)
-	# shell:
-	# 	"""
-	# 	(echo -e "INDV\tO(HOM)\tE(HOM)\tN_SITES\tF";cat {input.sample_het}| fgrep -v "N_SITES") > {output} 2> {log[1]}
-	# 	"""
 
 
-# #het rate rule: first get the data with vcftools
-# rule SampleHetRateChr:
-# 	output:
-# 		os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_{chr}_het.het")
-# 	input:
-# 		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
-# 		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
-# 		vcf=rules.cleanMissingHwe.output[0],
-# 		vcf_index=rules.cleanMissingHwe.output[0]
-# 	params:
-# 		bcftools=config['BCFTOOLS'],
-# 		vcftools=config['VCFTOOLS'],
-# 		tmp=os.path.join(BASE_OUT,config.get("paths").get("tmp")),
-# 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{vcf_name}_{chr}_het")
-# 	log:
-# 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-het.log",
-# 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-het.e"
-# 	threads: 1
-# 	resources:
-# 		mem_mb=5000
-# 	benchmark:
-# 		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_het.tsv"
-# 	envmodules:
-# 		"vcftools/0.1.16"
-# 	shell:
-# 		"""
-# 		{params.vcftools} --gzvcf {input.vcf} --het --chr {wildcards.chr} --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
-# 		"""
 
 #het rate rule: get vcftools result and extract the het rate for plotting
 rule SampleGetHetRateOut:
@@ -276,31 +244,3 @@ rule collectSampleMissingRate:
 	# 	(echo -e "INDV\tN_DATA\tN_GENOTYPES_FILTERED\tN_MISS\tF_MISS";cat {input.sample_miss}| fgrep -v "N_MISS") > {output} 2> {log[1]}
 	# 	"""
 
-
-#het rate rule: first get the data with vcftools
-#this rule could be useless...thinking about removing it
-# rule SampleROH:
-# 	output:
-# 		os.path.join(BASE_OUT,config.get("rules").get("SampleROH").get("out_dir"), "{vcf_name}_roh.LROH")
-# 	input:
-# 		# vcf=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz"),
-# 		# vcf_index=os.path.join(BASE_OUT,config.get("rules").get("mergeReapplyVQSR").get("out_dir"),"{vcf_name}.vcf.gz.tbi")
-# 		vcf=rules.cleanMissingHwe.output[0],
-# 		vcf_index=rules.cleanMissingHwe.output[0]
-# 	params:
-# 		vcftools=config['VCFTOOLS'],
-# 		out_prefix=os.path.join(BASE_OUT,config.get("rules").get("SampleROH").get("out_dir"), "{vcf_name}_{chr}_roh")
-# 	log:
-# 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-SampleROH.log",
-# 		config["paths"]["log_dir"] + "/{vcf_name}-{chr}-SampleROH.e"
-# 	threads: 1
-# 	resources:
-# 		mem_mb=15000
-# 	benchmark:
-# 		config["paths"]["benchmark"] + "/{vcf_name}_{chr}_SampleROH.tsv"
-# 	envmodules:
-# 		"vcftools/0.1.16"
-# 	shell:
-# 		"""
-# 		{params.vcftools} --gzvcf {input.vcf} --LROH --chr {wildcards.chr} --out {params.out_prefix} 1> {log[0]} 2> {log[1]}
-# 		"""
