@@ -98,7 +98,7 @@ rule all:
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_hetRateBySing_{group}.pdf"),out_name=PROJECT_NAME,group=['sex','cohort']),
 
         #nrdr rules and plots, to work only on AUTOSOMAL chromosomes
-        if config.get("paths").get("snp_array_data") != "FALSE" :
+        if config.get("paths").get("snp_array_data") != "NONE" :
             expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDR.txt"), vcf_name=out_prefix_autosomal),
             expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"), vcf_name=out_prefix_autosomal),
             expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt"), vcf_name=out_prefix_autosomal),
@@ -124,7 +124,7 @@ include:
 include:
     include_prefix + "/sample_qc.smk"
 
-if config.get("paths").get("snp_array_data") != "FALSE" :
+if config.get("paths").get("snp_array_data") != "NONE" :
     include:
         include_prefix + "/nrdr.smk"
 
