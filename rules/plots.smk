@@ -168,7 +168,7 @@ rule PlotHetRateSampleSing:
 		except Exception as e: 
 			logger.error(e, exc_info=True)
 
-if config.get("paths").get("snp_array_data") != "NONE" :
+if SNP_DATA != "NONE" :
 	#plot het rate per sample by singleton count
 	rule PlotHetRateSampleNRD:
 		output:

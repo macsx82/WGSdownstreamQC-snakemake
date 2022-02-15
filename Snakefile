@@ -26,13 +26,14 @@ MAIN_VCF_INPUT=config["paths"]["input_vcf"]
 chroms=config["chrs"]
 autosomal=[ x for x in config["chrs"] if x != "chrX" ]
 PROJECT_NAME=config["project_name"]
+SNP_DATA=config.get("paths").get("snp_array_data")
 # out_prefix=PROJECT_NAME + "_MERGED"
 #here we are defining outprefix as a list, since we want to parallelize everything and work by cromosome
 #We should be able to switch flawlessly from a chr based to a merged based pipeline,just modifying this parameter
 out_prefix=[PROJECT_NAME + "_" + chrom + "_MERGED" for chrom in chroms]
 out_prefix_autosomal=[PROJECT_NAME + "_" + chrom + "_MERGED" for chrom in autosomal]
 
-print(config.get("paths").get("snp_array_data"))
+print(SNP_DATA)
 ### path to resources needed for plots
 tgRefBed = config['paths']['1000G_ref_for_king']
 ref_pop=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())
@@ -98,7 +99,7 @@ rule all:
         expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_hetRateBySing_{group}.pdf"),out_name=PROJECT_NAME,group=['sex','cohort']),
 
         #nrdr rules and plots, to work only on AUTOSOMAL chromosomes
-        if config.get("paths").get("snp_array_data") != "NONE" :
+        if SNP_DATA != "NONE" :
             expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDR.txt"), vcf_name=out_prefix_autosomal),
             expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsites.txt"), vcf_name=out_prefix_autosomal),
             expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{vcf_name}_NRDRsamples.txt"), vcf_name=out_prefix_autosomal),
@@ -124,7 +125,7 @@ include:
 include:
     include_prefix + "/sample_qc.smk"
 
-if config.get("paths").get("snp_array_data") != "NONE" :
+if SNP_DATA != "NONE" :
     include:
         include_prefix + "/nrdr.smk"
 
