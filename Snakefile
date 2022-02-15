@@ -32,7 +32,7 @@ PROJECT_NAME=config["project_name"]
 out_prefix=[PROJECT_NAME + "_" + chrom + "_MERGED" for chrom in chroms]
 out_prefix_autosomal=[PROJECT_NAME + "_" + chrom + "_MERGED" for chrom in autosomal]
 
-
+print(config.get("paths").get("snp_array_data"))
 ### path to resources needed for plots
 tgRefBed = config['paths']['1000G_ref_for_king']
 ref_pop=list(config.get("rules").get("comparePopAF").get("ref_pops").keys())
