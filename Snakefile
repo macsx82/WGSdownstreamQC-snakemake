@@ -96,6 +96,16 @@ if SNP_DATA != "NONE" :
             #stats
             expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_initial.stats"), vcf_name=out_prefix),
             expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_HWE95call.stats"), vcf_name=out_prefix)
+            #release files to use for filtering
+            expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_cleaned.LD0.3_kingpcaprojpc.txt"),out_name=PROJECT_NAME),
+            expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_hetRate.txt"),out_name=PROJECT_NAME),
+            expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_missing_ALL.imiss"),out_name=PROJECT_NAME),
+            expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_SingCov.txt"),out_name=PROJECT_NAME),
+            expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.txt"), vcf_name=out_prefix,ref_pop=ref_pop)
+            expand(os.path.join(BASE_OUT, config.get('rules').get('release').get('out_dir'), "{out_name}_NRDRsamples.txt"),,out_name=PROJECT_NAME),
+            expand(os.path.join(BASE_OUT, config.get('rules').get('release').get('out_dir'), "{out_name}_NRDRsites.txt"),,out_name=PROJECT_NAME),
+            expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{vcf_name}_ARRAY_af_extrDiff.txt"), vcf_name=out_prefix_autosomal)
+
 else :
     rule all:
         input:
@@ -127,6 +137,12 @@ else :
             #stats
             expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_initial.stats"), vcf_name=out_prefix),
             expand(os.path.join(config.get("paths").get("base_out"),config.get("rules").get("stats").get("out_dir"),"{vcf_name}_HWE95call.stats"), vcf_name=out_prefix)
+            #release files to use for filtering
+            expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_cleaned.LD0.3_kingpcaprojpc.txt"),out_name=PROJECT_NAME),
+            expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_hetRate.txt"),out_name=PROJECT_NAME),
+            expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_missing_ALL.imiss"),out_name=PROJECT_NAME),
+            expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_SingCov.txt"),out_name=PROJECT_NAME),
+            expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.txt"), vcf_name=out_prefix,ref_pop=ref_pop)
 
 
 #### Modules ####
@@ -148,3 +164,5 @@ if SNP_DATA != "NONE" :
 include:
     include_prefix + "/plots.smk"
 
+include:
+    include_prefix + "/release.smk"

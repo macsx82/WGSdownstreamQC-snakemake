@@ -73,6 +73,11 @@ rules:
     out_dir: "04.nrdr/tables"
   stats:
     out_dir: "05.stats"
+  release:
+    out_dir: "06.release"
+    # out_dir_samples: "06.release/01.samples"
+    # out_dir_variants: "06.release/02.sites"
+    # out_dir_plots: "06.release/03.plots"
 
 ################ PATHS #################
 ### - INPUT and OUTPUT FILES PATHS - ###
