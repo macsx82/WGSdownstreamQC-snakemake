@@ -20,7 +20,7 @@ rule release:
 		config["paths"]["log_dir"] + "/Release_filter_files.e"
 	threads: 1
 	resources:
-		mem_mb=5000
+		mem_mb=2000
 	benchmark:
 		config["paths"]["benchmark"] + "/Release_filter_files.tsv"
 	run:
@@ -29,6 +29,7 @@ rule release:
 			outname=os.path.basename(c_out)
 			outpath=os.path.join(params.base_out, outname)
 			cp_cmd="cp %s %s" %(c_out, outpath)
+			shell(cp_cmd)
 
 
 if SNP_DATA != "NONE" :
@@ -50,7 +51,7 @@ if SNP_DATA != "NONE" :
 			config["paths"]["log_dir"] + "/release_nrd_files.e"
 		threads: 1
 		resources:
-			mem_mb=5000
+			mem_mb=2000
 		benchmark:
 			config["paths"]["benchmark"] + "/release_nrd_files.tsv"
 		run:
@@ -59,4 +60,5 @@ if SNP_DATA != "NONE" :
 				outname=os.path.basename(c_out)
 				outpath=os.path.join(params.base_out, outname)
 				cp_cmd="cp %s %s" %(c_out, outpath)
+				shell(cp_cmd)
 
