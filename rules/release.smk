@@ -7,10 +7,10 @@ rule release:
 		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_SingCov.txt"),out_name=PROJECT_NAME),
 		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.txt"), vcf_name=out_prefix,ref_pop=ref_pop)
 	input:
-		rules.kingPCA.output.proj_pc,
-		rules.SampleGetHetRateOut.output[0],
-		rules.collectSampleMissingRate.output[0],
-		rules.SingCovPlot.output[1],
+		expand(os.path.join(BASE_OUT,config.get("rules").get("kingPCA").get("out_dir"), "{out_name}_cleaned.LD0.3_kingpcaprojpc.txt"),out_name=PROJECT_NAME),
+		expand(os.path.join(BASE_OUT,config.get("rules").get("SampleHetRate").get("out_dir"), "{out_name}_hetRate.txt"),out_name=PROJECT_NAME),
+		expand(os.path.join(BASE_OUT,config.get("rules").get("SampleMissingRate").get("out_dir"), "{out_name}_missing_ALL.imiss"),out_name=PROJECT_NAME),
+		expand(os.path.join(BASE_OUT,config.get("rules").get("SamplePlots").get("out_dir"), "{out_name}_SingCov.txt"),out_name=PROJECT_NAME),
 		#variants
 		expand(os.path.join(BASE_OUT,config.get("rules").get("comparePopAF").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.txt"),vcf_name=out_prefix,ref_pop=ref_pop)
 	params:
@@ -39,9 +39,9 @@ if SNP_DATA != "NONE" :
 			expand(os.path.join(BASE_OUT, config.get('rules').get('release').get('out_dir'), "{out_name}_NRDRsites.txt"),out_name=PROJECT_NAME),
 			expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{vcf_name}_ARRAY_af_extrDiff.txt"), vcf_name=out_prefix_autosomal)
 		input:
-			rules.NRDbySample.output[0],
+			expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{out_name}_NRDRsamples.txt"),out_name=PROJECT_NAME),
 			#variants
-			rules.NRDbySite.output[0],
+			expand(os.path.join(BASE_OUT, config.get('rules').get('NRD').get('out_dir'), "{out_name}_NRDRsites.txt"),out_name=PROJECT_NAME),
 			expand(os.path.join(BASE_OUT,config.get("rules").get("getArrayPopAF").get("out_dir"), "{vcf_name}_ARRAY_af_extrDiff.txt"), vcf_name=out_prefix_autosomal)
 		params:
 			base_out=os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"))
