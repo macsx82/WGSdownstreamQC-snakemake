@@ -1,10 +1,10 @@
 #rule to generate a single folder with all data needed for the filtering step
 rule release:
 	output:
-		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_cleaned.LD0.3_kingpcaprojpc.txt"),out_name=PROJECT_NAME)
-		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_hetRate.txt"),out_name=PROJECT_NAME)
-		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_missing_ALL.imiss"),out_name=PROJECT_NAME)
-		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_SingCov.txt"),out_name=PROJECT_NAME)
+		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_cleaned.LD0.3_kingpcaprojpc.txt"),out_name=PROJECT_NAME),
+		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_hetRate.txt"),out_name=PROJECT_NAME),
+		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_missing_ALL.imiss"),out_name=PROJECT_NAME),
+		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_SingCov.txt"),out_name=PROJECT_NAME),
 		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.txt"), vcf_name=out_prefix,ref_pop=ref_pop)
 	input:
 		rules.kingPCA.output.proj_pc,
@@ -35,8 +35,8 @@ if SNP_DATA != "NONE" :
 	#rule to collect the NRD output files to move in the release folder. This rule will be executed only if SNP array data is provided
 	rule release_nrd:
 		output:
-			expand(os.path.join(BASE_OUT, config.get('rules').get('release').get('out_dir'), "{out_name}_NRDRsamples.txt"),out_name=PROJECT_NAME)
-			expand(os.path.join(BASE_OUT, config.get('rules').get('release').get('out_dir'), "{out_name}_NRDRsites.txt"),out_name=PROJECT_NAME)
+			expand(os.path.join(BASE_OUT, config.get('rules').get('release').get('out_dir'), "{out_name}_NRDRsamples.txt"),out_name=PROJECT_NAME),
+			expand(os.path.join(BASE_OUT, config.get('rules').get('release').get('out_dir'), "{out_name}_NRDRsites.txt"),out_name=PROJECT_NAME),
 			expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{vcf_name}_ARRAY_af_extrDiff.txt"), vcf_name=out_prefix_autosomal)
 		input:
 			rules.NRDbySample.output[0],
