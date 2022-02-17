@@ -7,7 +7,7 @@ rule release:
 		os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{out_name}_SingCov.txt"),
 		expand(os.path.join(BASE_OUT,config.get("rules").get("release").get("out_dir"), "{vcf_name}_{ref_pop}_af_extrDiff.txt"), vcf_name=out_prefix,ref_pop=ref_pop)
 	input:
-		rules.kingPCA.proj_pc,
+		rules.kingPCA.output.proj_pc,
 		rules.SampleGetHetRateOut.output[0],
 		rules.collectSampleMissingRate.output[0],
 		rules.SingCovPlot.output[1],
